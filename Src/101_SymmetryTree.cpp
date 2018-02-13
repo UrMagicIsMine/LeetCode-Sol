@@ -91,7 +91,7 @@ bool isSymmetricIterative(TreeNode* root) {
 		vector<TreeNode*> vecNode(deqNode.begin(), deqNode.end());
 		deqNode.clear();
 
-    // check the symmetric of each level
+    /* check the symmetric of each level */
 		if (checkSymmetric(vecNode)) {
 			nextLevelInDeq(vecNode, deqNode);
 		}
