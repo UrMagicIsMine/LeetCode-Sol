@@ -38,22 +38,22 @@ vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
 
     if(root){
 
-        deque<TreeNode*> deqTree;
-        deqTree.push_back(root);
+        deque<TreeNode*> deqNode;
+        deqNode.push_back(root);
 
         bool forward = true;
         while(!deqTree.empty()){
 
             vec1D vTmp;
-            int i = 0, N = deqTree.size();
+            int i = 0, N = deqNode.size();
             vTmp.resize(N);
 
             if(forward){
-                for( auto it = deqTree.begin(); it != deqTree.end(); it++ )
+                for( auto it = deqNode.begin(); it != deqNode.end(); it++ )
                     vTmp[i++] = (*it)->val;
             }
             else{
-                for( auto it = deqTree.rbegin(); it != deqTree.rend(); it++ )
+                for( auto it = deqNode.rbegin(); it != deqNode.rend(); it++ )
                     vTmp[i++] = (*it)->val;
             }
             forward = !forward;
@@ -61,12 +61,12 @@ vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
 
             while(N--){
 
-                TreeNode * pFront = deqTree.front();
+                TreeNode * pFront = deqNode.front();
                 if(pFront->left)
-                    deqTree.push_back(pFront->left);
+                    deqNode.push_back(pFront->left);
                 if(pFront->right)
-                    deqTree.push_back(pFront->right);
-                deqTree.pop_front();
+                    deqNode.push_back(pFront->right);
+                deqNode.pop_front();
             }
         }
     }
