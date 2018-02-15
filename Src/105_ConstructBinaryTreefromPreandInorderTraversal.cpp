@@ -30,16 +30,14 @@ struct TreeNode {
 	TreeNode(int x) : val(x), left(NULL), right(NULL) {}
 };
 
-TreeNode* _buildTree(const vector<int>& preorder, int& i, const vector<int>& inorder, int ibeg, int iend) {
+TreeNode* _buildTree(const vector<int>& preorder, int& iWork, const vector<int>& inorder, int ibeg, int iend) {
 
 	/* to build tree from pre-Order array, recursion should use pre-Order fashion */
 	while (ibeg <= iend) {
-		int imid = find(inorder.begin()+ibeg, inorder.begin()+iend, preorder[i]) - inorder.begin();
-		TreeNode * pNode = new TreeNode(preorder[i++]);
-		TreeNode * lChild = _buildTree(preorder, i, inorder, ibeg, imid - 1);
-		TreeNode * rChild = _buildTree(preorder, i, inorder, imid + 1, iend);
-		pNode->left = lChild;
-		pNode->right = rChild;
+		int imid = find(inorder.begin()+ibeg, inorder.begin()+iend, preorder[iWork]) - inorder.begin();
+		TreeNode * pNode = new TreeNode(preorder[iWork++]);
+		pNode->left  = _buildTree(preorder, iWork, inorder, ibeg, imid - 1);
+		pNode->right = _buildTree(preorder, iWork, inorder, imid + 1, iend);
 		return pNode;
 	}
 	return nullptr;
