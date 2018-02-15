@@ -96,7 +96,7 @@ TreeNode* sortedListToBST_IP(ListNode* head) {
 
 int main()
 {
-	vector<ListNode> vec = { -10,-3,0,5,9 };
+	vector<ListNode> vec = { -10, -3, 0, 5, 9 };
 	for (int i = 0; i < vec.size() - 1; i++)
 		vec[i].next = &vec[i + 1];
 
