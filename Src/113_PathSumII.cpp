@@ -1,18 +1,20 @@
-/* Given a binary tree and a sum, determine if the tree has a root-to-leaf path
-* such that adding up all the values along the path equals the given sum.
+/* Given a binary tree and a sum, find all root-to-leaf
+* paths where each path's sum equals the given sum.
 *
 * For example:
 * Given the below binary tree and sum = 22,
-*
 *               5
 *              / \
 *             4   8
 *            /   / \
 *           11  13  4
-*          /  \      \
-*         7    2      1
-* return true, as there exist a root-to-leaf path 5->4->11->2 which sum is 22.
-*
+*          /  \    / \
+*         7    2  5   1
+* return
+* [
+*    [5,4,11,2],
+*    [5,8,4,5]
+* ]
 */
 #include <vector>
 #include <algorithm>
@@ -40,6 +42,7 @@ TreeNode* _buildTree(const vector<int>& preorder, int& iWork, const vector<int>&
 		return pNode;
 	}
 	return nullptr;
+
 }
 
 TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
@@ -55,36 +58,32 @@ bool _isLeaf(TreeNode * pNode) {
 typedef vector<int> vec1D;
 typedef vector<vec1D> vec2D;
 
+void _pathSumRecv(TreeNode* pNode, vec2D& resl, int targetSum, int RunningSum, vec1D& path) {
+
+	if (pNode)
+	{
+		path.push_back(pNode->val);
+		if (_isLeaf(pNode) && pNode->val + RunningSum == targetSum)
+			resl.push_back(path);
+
+		_pathSumRecv(pNode->left, resl, targetSum, RunningSum + pNode->val, path);
+		_pathSumRecv(pNode->right, resl, targetSum, RunningSum + pNode->val, path);
+		path.pop_back();
+	}
+	return;
+}
+
 vector<vector<int>> pathSum(TreeNode* root, int sum) {
-    vec1D preVecs;
-    vec2D resl;
-    _pathSumRecv(root, resl, sum, 0, preVecs);
-    return resl;
-}
-
-void _pathSumRecv(TreeNode* pNode, vec2D& resl, int targetSum, int RunningSum, vec1D& path){
-
-    if(pNode)
-    {
-        path.push_back(pNode->val);
-        if( _isLeaf(pNode) && pNode->val + RunningSum == targetSum )
-            resl.push_back(path);
-
-        _pathSumRecv(pNode->left, resl, targetSum, RunningSum+pNode->val, path);
-        _pathSumRecv(pNode->right, resl, targetSum, RunningSum+pNode->val, path);
-        path.pop_back();
-    }
-    return;
-}
-bool _isLeaf(TreeNode * pNode){
-    return pNode->left == nullptr && pNode->right == nullptr;
+	vec1D preVecs;
+	vec2D resl;
+	_pathSumRecv(root, resl, sum, 0, preVecs);
+	return resl;
 }
 
 int main()
 {
-
-	vector<int> preOrder = { 5,4,11,7,2,8,13,4,1 };
-	vector<int> inOrder = { 7,11,2,4,5,13,8,4,1 };
+	vec1D preOrder = { 5,4,11,7,2,8,13,4,5,1 };
+	vec1D inOrder = { 7,11,2,4,5,13,8,5,4,1 };
 	TreeNode* root = buildTree(preOrder, inOrder);
 
 	vec2D ret = pathSum(root, 22);
