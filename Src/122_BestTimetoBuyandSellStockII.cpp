@@ -13,6 +13,7 @@
 
 using namespace std;
 
+/* Simple solution: don't make problem complicated */
 int maxProfit(vector<int>& prices) {
 
 	int maxProfit = 0;
