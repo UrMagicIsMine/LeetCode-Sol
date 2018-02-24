@@ -63,6 +63,9 @@ int majorityElement_MV(vector<int>& nums) {
 }
 
 /* bit manipulation algorithms */
+/* Another nice idea! The key lies in how to count the number of 1's on a specific
+* bit. Specifically, you need a mask with a 1 on the i-the bit and 0 otherwise
+* to get the i-th bit of each element in nums. The code is as follows.*/
 
 int majorityElement_BM(vector<int>& nums) {
 	int major = 0, n = nums.size();
