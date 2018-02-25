@@ -25,7 +25,7 @@
 * S and T consist of lowercase letters only.
 */
 
-#include <unordered_map>
+#include <string>
 #include <algorithm>
 #include <cassert>
 using namespace std;
