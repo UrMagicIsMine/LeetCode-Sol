@@ -20,7 +20,8 @@ using namespace std;
 *   -- otherwise, do not robbing, robMoney[i] = robMoney[i-1];
 */
 
-int rob(vector<int>& nums) {
+/* Solution 1: run-time O(N), memory O(N) */
+int rob_Sln1(vector<int>& nums) {
 
 	int N = nums.size();
 	if (N == 0)
@@ -38,10 +39,27 @@ int rob(vector<int>& nums) {
 	return robMoney[N - 1];
 }
 
+/* Solution 2: run-time O(N), memory O(1) */
+int rob_Sln2(vector<int>& nums) {
+
+	int N = nums.size();
+	int preRob = 0, curRob = 0;
+
+	for (int i = 0; i < N; i++) {
+		int tmp = max(nums[i] + preRob, curRob);
+		preRob = curRob;
+		curRob = tmp;
+
+	}
+	return curRob;
+}
+
 int main()
 {
 	vector<int> money = { 1,2,3,1 };
-	int ret = rob(money);
-	assert(ret == 4);
+	int ret1 = rob_Sln1(money);
+	assert(ret1 == 4);
+	int ret2 = rob_Sln2(money);
+	assert(ret2 == 4);
 	return 0;
 }
