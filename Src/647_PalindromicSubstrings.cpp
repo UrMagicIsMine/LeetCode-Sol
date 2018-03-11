@@ -30,7 +30,7 @@ bool isPal(const string& s, int beg, int end) {
 
 /* DP solution, O(n^2), O(n^3)? need optimization */
 
-int countSubstrings(string s) {
+int countSubstrings_sln1(string s) {
 
 	int N = s.size();
 	vector<int> dpVec(N + 1, 0);
@@ -47,11 +47,36 @@ int countSubstrings(string s) {
 	return dpVec[N];
 }
 
+/* Solution 2: O(N^2) solution */
+
+int _cntPal(const string& s, int beg, int end){
+		int cnt = 0;
+		for(; beg>=0 && end < s.length() && s[beg]==s[end]; beg--, end++ )
+				cnt++;
+		return cnt;
+}
+
+int countSubstrings_sln2(string s) {
+
+	int N = s.size();
+	vector<int> dpVec(N + 1, 0);
+		int ret = 0;
+	for (int i = 0; i < N; i++) { /* use i as middle to search */
+				ret += _cntPal(s, i, i); /* palindromic string size are odd */
+				ret += _cntPal(s, i, i+1); /* palindromic string size are even */
+	}
+	return ret;
+
+}
+
 int main()
 {
 	string s = "aba";
 	int ans = 4;
-	auto ret = countSubstrings(s);
-	assert(ret == ans);
+	auto ret1 = countSubstrings_sln1(s);
+	assert(ret1 == ans);
+
+	auto ret2 = countSubstrings_sln2(s);
+	assert(ret2 == ans);
 	return 0;
 }
