@@ -96,7 +96,6 @@ public:
 				return _search(word, ichar + 1, pNode);
 			}
 		}
-
 	}
 
 	TrieNode m_root;
