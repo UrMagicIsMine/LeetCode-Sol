@@ -30,9 +30,9 @@ struct TreeNode {
 
 TreeNode* invertTree(TreeNode* root) {
 	if (root) {
-		TreeNode *ptmp = root->left;
-		root->left = invertTree(root->right);
-		root->right = invertTree(ptmp);
+		invertTree(root->right);
+		invertTree(root->left);
+		swap(root->left, root->right);
 	}
 	return root;
 }
