@@ -29,29 +29,29 @@ using namespace std;
  * 2) store hash table using vector, sort vector based on frequency in descending
  * order and string in ascending order;
  * 3) get top K frequent result;
+ * Note: be careful about the use of reference to avoid extra string copy 
  */
 
-vector<string> topKFrequent(vector<string>& words, int k) {
-	unordered_map<string, int> hashtbl;
-	for (auto w : words)
-		hashtbl[w]++;
+ vector<string> topKFrequent(vector<string>& words, int k) {
+     unordered_map<string, int> hashtbl;
+     for(auto &w : words)
+         hashtbl[w]++;
 
-	vector<pair<string, int>> freqVec(hashtbl.size());
-	int i = 0;
-	for (auto pr : hashtbl)
-		freqVec[i++] = pr;
+     vector<pair<string, int>> freqVec(hashtbl.size());
+     int i = 0;
+     for (auto &pr : hashtbl)
+         freqVec[i++] = pr;
 
-	using P_SI = pair<string, int>;
-	auto lambda = [](P_SI& p1, P_SI& p2) {return p1.second > p2.second
-                          || (p1.second == p2.second && p1.first < p2.first);};
-	sort(freqVec.begin(), freqVec.end(), lambda);
+     using P_SI = pair<string, int>;
+     auto lambda = [&](P_SI& p1, P_SI& p2){return p1.second > p2.second || (p1.second == p2.second && p1.first < p2.first);};
+     sort(freqVec.begin(), freqVec.end(), lambda);
 
-	vector<string> resl(k);
-	for (i = 0; i<k; i++)
-		resl[i] = freqVec[i].first;
+     vector<string> resl(k);
+     for(i = 0; i<k; i++)
+         resl[i] = freqVec[i].first;
 
-	return resl;
-}
+     return resl;
+ }
 
 int main()
 {
