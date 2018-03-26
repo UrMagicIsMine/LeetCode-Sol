@@ -10,10 +10,11 @@ You may assume the string contains only lowercase alphabets.
 */
 
 #include <vector>
+#include <algorithm>
 #include <cassert>
 using namespace std;
 
-bool isAnagram(string s, string t) {
+bool isAnagram_HT(string s, string t) {
 	if (s.size() != t.size())
 		return false;
 
@@ -26,11 +27,21 @@ bool isAnagram(string s, string t) {
 	return sVec == tVec;
 }
 
+bool isAnagram_ST(string s, string t) {
+	if (s.size() != t.size())
+		return false;
+	sort(s.begin(), s.end());
+	sort(t.begin(), t.end());
+	return s == t;
+}
+
 int main()
 {
 	string s = "anagram", t = "nagaram";
 	bool ans = true;
-	bool ret = isAnagram(s, t);
-	assert(ret == ans);
+	bool ret1 = isAnagram_HT(s, t);
+	assert(ret1 == ans);
+	bool ret2 = isAnagram_ST(s, t);
+	assert(ret2 == ans);
 	return 0;
 }
