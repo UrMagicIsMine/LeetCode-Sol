@@ -38,11 +38,25 @@ int hammingWeight_Sln2(uint32_t n) {
 	return weight;
 }
 
+/* Solution : N & (N-1) trick */
+
+int hammingWeight_Sln3(uint32_t n) {
+
+		int ret = 0;
+		while( n ){
+				n &= n-1;
+				ret++;
+		}
+		return ret;
+}
+
 int main()
 {
 	int ret1 = hammingWeight_Sln1(11);
 	assert(ret1 == 3);
 	int ret2 = hammingWeight_Sln2(11);
 	assert(ret2 == 3);
+	int ret3 = hammingWeight_Sln3(11);
+	assert(ret3 == 3);
 	return 0;
 }
