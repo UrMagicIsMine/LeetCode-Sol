@@ -11,7 +11,7 @@ using namespace std;
 
 /* Solution 1: in-place use bitset, flip if not equal */
 
-uint32_t reverseBits_Sol1(uint32_t n) {
+uint32_t reverseBits_Sln1(uint32_t n) {
 
 	bitset<32> bits(n);
 
@@ -29,7 +29,7 @@ uint32_t reverseBits_Sol1(uint32_t n) {
 
 /* Solution 2: use a copy of bitset, do reverse and convert */
 
-uint32_t reverseBits_Sol2(uint32_t n) {
+uint32_t reverseBits_Sln2(uint32_t n) {
 
 	bitset<32> x(n);
 	bitset<32> y;
@@ -43,11 +43,27 @@ uint32_t reverseBits_Sol2(uint32_t n) {
 
 }
 
+/* Solution 3: Bit manipulation */
+
+uint32_t reverseBits_Sln3(uint32_t n) {
+
+		uint32_t mask = 1 << 31, ret = 0;
+		while(n){
+				if(n&1)
+						ret |= mask;
+				n >>= 1;
+				mask >>= 1;
+		}
+		return ret;
+}
+
 int main()
 {
-	uint32_t ret1 = reverseBits_Sol1(43261596);
+	uint32_t ret1 = reverseBits_Sln1(43261596);
 	assert(ret1 == 964176192);
-	uint32_t ret2 = reverseBits_Sol2(43261596);
+	uint32_t ret2 = reverseBits_Sln2(43261596);
 	assert(ret2 == 964176192);
+	uint32_t ret3 = reverseBits_Sln3(43261596);
+	assert(ret3 == 964176192);
 	return 0;
 }
