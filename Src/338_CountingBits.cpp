@@ -19,9 +19,30 @@
 #include <algorithm>
 using namespace std;
 
+
+/* Bit manipulation */
+int _countBits(int num){
+		int ret = 0;
+		while(num){
+				num &= (num-1);
+				ret++;
+		}
+		return ret;
+}
+
+vector<int> countBits_BM(int num) {
+
+		vector<int> resl(num+1, 0);
+		for(int i = 0; i <= num; i++)
+				resl[i] = _countBits(i);
+
+		return resl;
+
+}
+
 /* succinct DP solution */
 
-vector<int> countBits(int num) {
+vector<int> countBits_DP(int num) {
 
 	vector<int> resl(num + 1, 0);
 	for (int i = 1; i <= num; i++)
@@ -34,8 +55,10 @@ int main()
 {
 	int num = 6;
 	vector<int> ans = { 0,1,1,2,1,2,2 };
-	vector<int> ret = countBits(num);
-	assert(ret == ans);
+	vector<int> ret1 = countBits_BM(num);
+	assert(ret1 == ans);
+	vector<int> ret2 = countBits_DP(num);
+	assert(ret2 == ans);
 	return 0;
 
 }
