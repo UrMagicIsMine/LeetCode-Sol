@@ -20,7 +20,7 @@
 #include <cassert>
 using namespace std;
 
-int missingNumber(vector<int>& nums) {
+int missingNumber_Sln1(vector<int>& nums) {
 
 	int sum = nums.size() * (nums.size() + 1)/2;
 
@@ -30,11 +30,26 @@ int missingNumber(vector<int>& nums) {
 	return sum;
 
 }
+
+int missingNumber_Sln2(vector<int>& nums) {
+
+		int ret = 0;
+		for(int i = 0; i < nums.size(); i++){
+				ret ^= i;
+				ret ^= nums[i];
+		}
+		ret ^= nums.size();
+		return ret;
+
+}
+
 int main()
 {
 	vector<int> nums = { 9,6,4,2,3,5,7,0,1 };
 	int ans = 8;
-	int ret = missingNumber(nums);
-	assert(ret == ans);
+	int ret1 = missingNumber_Sln1(nums);
+	assert(ret1 == ans);
+	int ret2 = missingNumber_Sln2(nums);
+	assert(ret2 == ans);
 	return 0;
 }
