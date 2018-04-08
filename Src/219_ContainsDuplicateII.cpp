@@ -18,9 +18,9 @@ bool containsNearbyDuplicate(vector<int>& nums, int k) {
 		else
 			hashtbl[nums[i]] = i;
 	}
-
 	return false;
 }
+
 int main()
 {
 	vector<int> nums = { 2,3,4,5,6,2,3,4 };
