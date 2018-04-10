@@ -16,10 +16,11 @@
 #include <vector>
 #include <string>
 #include <unordered_set>
+#include <sstream>
 #include <cassert>
 using namespace std;
 
-bool wordPattern(string pattern, string str) {
+bool wordPattern_Sln1(string pattern, string str) {
 
 	vector<string> ctow(26);
 	unordered_set<string> usedstr;
@@ -58,10 +59,44 @@ bool wordPattern(string pattern, string str) {
 	return pos2 == string::npos;
 }
 
+bool wordPattern_Sln2(string pattern, string str) {
+
+	istringstream sstrm(str);
+	string stmp;
+	vector<string> strVec;
+
+	while (sstrm >> stmp) {
+		strVec.push_back(stmp);
+	}
+
+	if (pattern.length() != strVec.size())
+		return false;
+
+	vector<string> ctow(26);
+	unordered_set<string> usedstr;
+
+	for (int i = 0; i < pattern.size(); i++) {
+
+		if (ctow[pattern[i] - 'a'].length() == 0) {
+
+			if (usedstr.find(strVec[i]) != usedstr.end())
+				return false;
+			ctow[pattern[i] - 'a'] = strVec[i];
+			usedstr.insert(strVec[i]);
+		}
+		else if (ctow[pattern[i] - 'a'] != strVec[i])
+			return false;
+	}
+
+	return true;
+}
+
 int main()
 {
 	string pattern = "abba", str = "dog cat cat dog";
-	bool ret = wordPattern(pattern, str);
-	assert(ret == true);
+	bool ret1 = wordPattern_Sln1(pattern, str);
+	assert(ret1 == true);
+	bool ret2 = wordPattern_Sln2(pattern, str);
+	assert(ret2 == true);
 	return 0;
 }
