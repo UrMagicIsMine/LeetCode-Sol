@@ -42,7 +42,7 @@ int palLength(const string& s, int i, int j) {
 	return Len;
 }
 
-string longestPalindrome(string s) {
+string longestPalindrome_Sln1(string s) {
 
 	if (s.size() == 0)
 		return "";
@@ -63,11 +63,36 @@ string longestPalindrome(string s) {
 		return s.substr(imid - maxLen / 2 + 1, maxLen);
 }
 
+string longestPalindrome_Sln2(string s) {
+
+	int maxLen = 0, iLeft = 0;;
+	for (int i = 0; i < s.size(); i++) {
+		int Left = i, Right = i;
+		while (Right + 1 < s.size() && s[Right] == s[Right + 1])
+			Right++;
+
+		i = Right;
+		while (Left > 0 && Right + 1 < s.size() && s[Left - 1] == s[Right + 1]) {
+			Left--;
+			Right++;
+		}
+
+		if (maxLen < Right - Left + 1) {
+			iLeft = Left;
+			maxLen = Right - Left + 1;
+		}
+	}
+	return s.substr(iLeft, maxLen);
+
+}
+
 int main()
 {
 	string s = "babad";
 	string ans = "bab";
-	string ret = longestPalindrome(s);
-	assert(ret == ans);
+	string ret1 = longestPalindrome_Sln1(s);
+	assert(ret1 == ans);
+	string ret2 = longestPalindrome_Sln2(s);
+	assert(ret2 == ans);
 	return 0;
 }
