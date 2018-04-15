@@ -17,6 +17,10 @@
 #include <cassert>
 using namespace std;
 
+/* complexity analysis rests on understanding how many elements there are in the
+result, the Time and Space Complexity are both O(4^n/(n*sqrt(n)))
+*/
+
 void _genParBT(vector<string>&resl, string &cur, int nLeft, int nRight) {
 
 	if (nLeft == 0 && nRight == 0) {
@@ -30,12 +34,12 @@ void _genParBT(vector<string>&resl, string &cur, int nLeft, int nRight) {
 			_genParBT(resl, cur, nLeft - 1, nRight);
 			cur.pop_back();
 		}
+		/* right needs to be larger than left, otherwise it could have this "())(" */
 		if (nRight > nLeft) {
 			cur.push_back(')');
 			_genParBT(resl, cur, nLeft, nRight - 1);
 			cur.pop_back();
 		}
-
 	}
 }
 
