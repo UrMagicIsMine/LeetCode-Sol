@@ -17,10 +17,12 @@ string longestCommonPrefix(vector<string>& strs) {
 	if (strs.size() == 1)
 		return strs[0];
 
+  /* find the shortest length of string in the vector */
 	for (int i = 0; i < strs.size(); i++) {
 		N = min<int>(strs[i].size(), N);
 	}
 
+  /* do a matrix-like comparison */
 	for (int j = 0; j < N; j++) {
 		for (int i = 1; i < strs.size(); i++) {
 			if (strs[0][j] != strs[i][j]) {
