@@ -45,7 +45,7 @@ vector<vector<int>> palindromePairs(vector<string>& words) {
   candidate) forms a pair: left | right | candidate.
   2) same for checking the right side of current word: candidate | left | right.
   */
-  
+
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < words[i].size(); j++) {
 			string sleft = words[i].substr(0, j);
@@ -58,6 +58,7 @@ vector<vector<int>> palindromePairs(vector<string>& words) {
 				resl.push_back({ it->second, i });
 		}
 
+    // handle speical cases, where "" exists
 		if (words[i] == "") {
 			for (int k = 0; k < N; k++) {
 				if (i != k && isPal(words[k]))
