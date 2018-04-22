@@ -75,9 +75,9 @@ int main()
 	vector<int> heights = { 2,1,5,6,2,3 };
 	int ans = 10;
 	int ret1 = largestRectangleArea_AR(heights);
-	assert(ret1 = ans);
+	assert(ret1 == ans);
 
 	int ret2 = largestRectangleArea_ST(heights);
-	assert(ret2 = ans);
+	assert(ret2 == ans);
 	return 0;
 }
