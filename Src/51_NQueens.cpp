@@ -26,22 +26,22 @@
 #include <cassert>
 using namespace std;
 
-bool _checkSafe(int i, int j, int n, vector<string>& puzzle) {
+bool _isValid(int row, int col, int n, vector<string>& Queens) {
 
-	/* check row */
-	for (int row = 0; row < n; row++)
-		if (puzzle[row][j] == 'Q')
-			return false;
-	/* check col */
-	for (int col = 0; col < n; col++)
-		if (puzzle[i][col] == 'Q')
+	int sum = row + col, diff = row - col;
+
+	for (int i = 0; i < n; i++) {
+		if (Queens[i][col] == 'Q' || Queens[row][i] == 'Q')
 			return false;
 
-	for (int row = 0; row<n; row++)
-		for (int col = 0; col<n; col++)
-			if (((i - j == row - col) || (i + j == row + col)) && puzzle[row][col] == 'Q')
-				return false;
+		int j = sum - i;
+		if (j >= 0 && j < n && Queens[i][j] == 'Q')
+			return false;
 
+		j = i - diff;
+		if (j >= 0 && j < n && Queens[i][j] == 'Q')
+			return false;
+	}
 	return true;
 }
 
@@ -53,7 +53,7 @@ bool _solveBT(vector<vector<string>>& resl, int N, vector<string>& puzzle, int r
 	else {
 
 		for (int col = 0; col < N; col++) {
-			if (_checkSafe(row, col, N, puzzle)) {
+			if (_isValid(row, col, N, puzzle)) {
 				puzzle[row][col] = 'Q';
 				_solveBT(resl, N, puzzle, row + 1);
 				puzzle[row][col] = '.';
