@@ -21,7 +21,7 @@ struct ListNode {
 	ListNode(int x) : val(x), next(NULL) {}
 };
 
-ListNode* reverseBetween(ListNode* head, int m, int n) {
+ListNode* reverseBetween_Sln1(ListNode* head, int m, int n) {
 	ListNode dummy(0);
 	dummy.next = head;
 	m = m - 1;
@@ -45,7 +45,37 @@ ListNode* reverseBetween(ListNode* head, int m, int n) {
 	return dummy.next;
 }
 
+ListNode* reverseBetween_Sln2(ListNode* head, int m, int n) {
+	ListNode dummy(0);
+	dummy.next = head;
+	int i = m - 1;
+	ListNode*pf = nullptr, *pb = &dummy;
+	while (i--)
+		pb = pb->next;
+	pf = pb->next;
+
+	for (i = 0; i < n - m; i++) {
+		ListNode* ptmp = pf->next;
+		pf->next = ptmp->next;
+		ptmp->next = pb->next;
+		pb->next = ptmp;
+	}
+	return dummy.next;
+}
+
 int main()
 {
+	vector<ListNode> nodes = { 1,2,3,4,5 };
+	for (int i = 0; i < nodes.size() - 1; i++)
+		nodes[i].next = &nodes[i + 1];
+	int m = 2, n = 4;
+	vector<int> ans = { 1,4,3,2,5 };
+	vector<int> ret;
+	ListNode* pRet = reverseBetween_Sln2(&nodes[0], m, n);
+	while (pRet) {
+		ret.push_back(pRet->val);
+		pRet = pRet->next;
+	}
+	assert(ret == ans);
 	return 0;
 }
