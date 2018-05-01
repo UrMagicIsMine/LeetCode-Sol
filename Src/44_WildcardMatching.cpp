@@ -50,6 +50,15 @@ Output: false
 #include <cassert>
 using namespace std;
 
+/*
+For each element in s
+If s[i]==p[j] or p[j] == '?' which means this is a match, then goes to next element i++ j++.
+If p[j]=='*', this is also a match, but one or many chars may be available, so let us save this *'s position and the matched s position.
+If not match, then we check if there is a * previously showed up,
+       if there is no *,  return false;
+       if there is an *,  we set current j to the next element of *, and set current i to the next saved s position.
+*/
+
 bool isMatch(string s, string p) {
 
 	if (s.empty() && p.empty())
