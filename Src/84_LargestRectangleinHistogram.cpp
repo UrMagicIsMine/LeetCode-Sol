@@ -39,10 +39,10 @@ int largestRectangleArea_ST(vector<int>& heights) {
 	int N = heights.size();
 	if (N == 0)
 		return 0;
-
+	heights.push_back(0);
 	stack<int> stackIdx;
 
-	for (int cur = 0; cur < N; cur++) {
+	for (int cur = 0; cur <= N; cur++) {
 
 		if (stackIdx.empty() || heights[cur] >= heights[stackIdx.top()]) {
 			stackIdx.push(cur);
@@ -60,13 +60,6 @@ int largestRectangleArea_ST(vector<int>& heights) {
 		}
 	}
 
-	int right = stackIdx.top() + 1;
-	while (!stackIdx.empty()) {
-		int idx = stackIdx.top();
-		stackIdx.pop();
-		int left = stackIdx.empty() ? -1 : stackIdx.top();
-		maxA = max(maxA, heights[idx] * (right - left - 1));
-	}
 	return maxA;
 }
 
