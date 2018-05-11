@@ -84,6 +84,34 @@ void recoverTree_Sln1(TreeNode* root) {
 	return;
 }
 
+/* solution 2, Find 
+First Node that is larger than it's next
+Second Node that is smaller than it's smaller than it's previous
+*/
+
+void _inOrder2(TreeNode* pNode, TreeNode* &p1, TreeNode* &p2, TreeNode*& pPrev){
+		if(pNode){
+				_inOrder2(pNode->left, p1, p2, pPrev);
+
+				if(pPrev && !p1 && pNode->val <= pPrev->val)
+						p1 = pPrev;
+				if(pPrev && p1 && pNode->val <= pPrev->val)
+						p2 = pNode;
+
+				pPrev = pNode;
+
+				_inOrder2(pNode->right, p1, p2, pPrev);
+		}
+		return;
+}
+
+void recoverTree_Sln2(TreeNode* root) {
+		TreeNode *p1 = nullptr, *p2 = nullptr, *pPrev = nullptr;
+		_inOrder2(root, p1, p2, pPrev);
+		swap(p1->val, p2->val);
+		return;
+}
+
 int main()
 {
 	vector<TreeNode> TreeNodes = { 3,1,4,2 };
@@ -95,7 +123,7 @@ int main()
 	vector<int> ans = { 2,1,4,3 };
 
 	vector<int> ret(4,0);
-	recoverTree_Sln1(pRoot);
+	recoverTree_Sln2(pRoot);
 	for (int i = 0; i < TreeNodes.size(); i++) {
 		ret[i] = TreeNodes[i].val;
 	}
