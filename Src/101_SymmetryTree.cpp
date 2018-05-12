@@ -60,53 +60,41 @@ bool isSymmetricRecusive(TreeNode* root) {
 /******************************************************************************/
 
 /* Begin of Iterative solution */
-bool checkSymmetric(vector<TreeNode*> & vecNode)
-{
-	int ift = 0;
-	int ibk = vecNode.size() - 1;
-	for (; ift <= ibk; ift++, ibk--) {
-		if ((vecNode[ift] && vecNode[ibk] && vecNode[ift]->val == vecNode[ibk]->val)
-			|| (vecNode[ift] == nullptr && vecNode[ibk] == nullptr))
-			continue;
-		else
-			return false;
-	}
-	return true;
+bool isSym(deque<TreeNode*>& DeqNodes){
+    int i = 0, j = int(DeqNodes.size()) - 1;
+
+    for(; i < j; i++, j--){
+        if(!DeqNodes[i] && !DeqNodes[j])
+            continue;
+        if(DeqNodes[i] && DeqNodes[j] && DeqNodes[i]->val == DeqNodes[j]->val)
+            continue;
+        return false;
+    }
+    return true;
 }
 
-void nextLevelInDeq(vector<TreeNode*> & vecNode, deque<TreeNode*>& deqNode)
-{
-	for (auto it = vecNode.begin(); it != vecNode.end(); it++) {
-		if (*it) {
-			deqNode.push_back((*it)->left);
-			deqNode.push_back((*it)->right);
-		}
-	}
-	return;
+bool isSymmetric(TreeNode* root) {
+
+    deque<TreeNode*> DeqNodes;
+    DeqNodes.push_back(root);
+
+    while(!DeqNodes.empty()){
+        int N = DeqNodes.size();
+        while(N--){
+
+            TreeNode* pNode = DeqNodes.front();
+            DeqNodes.pop_front();
+            if(pNode){
+                DeqNodes.push_back(pNode->left);
+                DeqNodes.push_back(pNode->right);
+            }
+        }
+
+        if(!isSym(DeqNodes))
+            return false;
+    }
+    return true;
 }
-
-bool isSymmetricIterative(TreeNode* root) {
-
-	if (!root)
-		return true;
-	deque<TreeNode*> deqNode;
-	deqNode.push_back(root);
-
-	while (!deqNode.empty()) {
-		vector<TreeNode*> vecNode(deqNode.begin(), deqNode.end());
-		deqNode.clear();
-
-    /* check the symmetric of each level */
-		if (checkSymmetric(vecNode)) {
-			nextLevelInDeq(vecNode, deqNode);
-		}
-		else {
-			return false;
-		}
-	}
-	return true;
-}
-/* End of Iterative solution */
 
 /******************************************************************************/
 
