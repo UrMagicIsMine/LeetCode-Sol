@@ -29,37 +29,29 @@ struct TreeNode {
 	TreeNode *right;
 	TreeNode(int x) : val(x), left(NULL), right(NULL) {}
 };
-typedef vector<int> vec1D;
-typedef vector<vec1D> vec2D;
 
 vector<vector<int>> levelOrderBottom(TreeNode* root) {
-
-	vec2D reslTmp;
-	if (root) {
-		queue<TreeNode*> queNode;
-		queNode.push(root);
-
-		while (!queNode.empty()) {
-
-			vec1D vTmp;
-			int N = queNode.size();
-			vTmp.reserve(2 * N);
-			TreeNode * pTmp = nullptr;
-			while (N--) {
-
-				pTmp = queNode.front();
-				if (pTmp->left)
-					queNode.push(pTmp->left);
-				if (pTmp->right)
-					queNode.push(pTmp->right);
-
-				vTmp.push_back(pTmp->val);
-				queNode.pop();
-			}
-			reslTmp.push_back(std::move(vTmp));
+		vector<vector<int>> resl;
+		if(!root)
+				return resl;
+		queue<TreeNode*> QueNodes;
+		QueNodes.push(root);
+		while(!QueNodes.empty()){
+				int N = QueNodes.size();
+				vector<int> levels;
+				while(N--){
+						TreeNode* pNode = QueNodes.front();
+						QueNodes.pop();
+						if(pNode->left)
+								QueNodes.push(pNode->left);
+						if(pNode->right)
+								QueNodes.push(pNode->right);
+						levels.push_back(pNode->val);
+				}
+				resl.emplace_back(levels);
 		}
-	}
-	return vec2D(reslTmp.rbegin(), reslTmp.rend());
+		reverse(resl.begin(), resl.end());
+		return resl;
 }
 
 int main()
