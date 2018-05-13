@@ -26,11 +26,37 @@ struct TreeNode {
 * if it has 2 child, minDepth(p) = minDepth(lchild,rchild) + 1
 */
 
-int minDepth(TreeNode* root) {
+int minDepth_Sln1(TreeNode* root) {
 	if (root == NULL) return 0;
-	if (root->left == NULL) return minDepth(root->right) + 1;
-	if (root->right == NULL) return minDepth(root->left) + 1;
-	return min(minDepth(root->left), minDepth(root->right)) + 1;
+	if (root->left == NULL) return minDepth_Sln1(root->right) + 1;
+	if (root->right == NULL) return minDepth_Sln1(root->left) + 1;
+	return min(minDepth_Sln1(root->left), minDepth_Sln1(root->right)) + 1;
+}
+
+int minDepth_Sln2(TreeNode* root) {
+		if(!root)
+				return 0;
+		queue<TreeNode*> QueNodes;
+		QueNodes.push(root);
+		int lvl = 1;
+		while(!QueNodes.empty()){
+
+				int N = QueNodes.size();
+				while(N--){
+
+						TreeNode* p = QueNodes.front();
+						QueNodes.pop();
+						if(!p->left && !p->right)
+								return lvl;
+						if(p->left)
+								QueNodes.push(p->left);
+						if(p->right)
+								QueNodes.push(p->right);
+
+				}
+				lvl++;
+		}
+		return -1;
 }
 
 int main()
@@ -42,6 +68,6 @@ int main()
 	vec[1].right = &vec[3];
 	vec[2].right = &vec[4];
 
-	int ret = minDepth(&vec[0]);
+	int ret = minDepth_Sln2(&vec[0]);
 	return 0;
 }
