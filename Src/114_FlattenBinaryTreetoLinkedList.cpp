@@ -56,68 +56,45 @@ TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
 	return _buildTree(preorder, i, inorder, 0, N - 1);
 }
 
-/******************************************************************************/
-/* Solution 1: simple recrusive solution, less efficient (notice the while loop
-* inside the if-condition syntax)
-*/
-void flatten1(TreeNode* root) {
 
-	if (root)
-	{
-		flatten1(root->left);
-		flatten1(root->right);
-
-		if (root->left) {
-			TreeNode* pRight = root->right;
-			root->right = root->left;
-			root->left = nullptr;
-			TreeNode* pTmp = root->right;
-			while (pTmp->right)
-				pTmp = pTmp->right;
-			pTmp->right = pRight;
-		}
-	}
-	return;
+void _flatten(TreeNode* root, TreeNode*& pre) {
+		if(!root)
+				return;
+		_flatten(root->right, pre);
+		_flatten(root->left, pre);
+		root->right = pre;
+		root->left = nullptr;
+		pre = root;
 }
 
-/******************************************************************************/
-/* Solution 2: efficient recrusive solution, _flattenRecv function returns a
-* pointer pointing to the end of sub-tree; This avoids the while loop in the
-* above solution 1;
-*/
-
-TreeNode* _flattenRecv(TreeNode *pNode) {
-
-	if (pNode) {
-
-		TreeNode * left_end = _flattenRecv(pNode->left);
-		TreeNode * rght_end = _flattenRecv(pNode->right);
-
-		if (left_end && rght_end) {
-			left_end->right = pNode->right;
-			pNode->right = pNode->left;
-			pNode->left = nullptr;
-			return rght_end;
-		}
-		if (left_end && !rght_end) {
-			pNode->right = pNode->left;
-			pNode->left = nullptr;
-			return left_end;
-		}
-		if (rght_end && !left_end)
-			return rght_end;
-
-		return pNode;
-	}
-	return nullptr;
-
+void flatten1(TreeNode* root) {
+		TreeNode* p = nullptr;
+		_flatten(root, p);
+		return;
 }
 
 void flatten2(TreeNode* root) {
+		TreeNode dummy(0);
+		TreeNode* p = &dummy;
+		stack<TreeNode*> stNodes;
+		TreeNode *pNode = root;
+		while(pNode){
 
-	_flattenRecv(root);
+				if(pNode->right)
+						stNodes.push(pNode->right);
+				p->right = pNode;
+				pNode = pNode->left;
+				p->right->left = nullptr;
+				p->right->right = nullptr;
+				p = p->right;
+
+				if(!pNode && !stNodes.empty()){
+						pNode = stNodes.top();
+						stNodes.pop();
+				}
+		}
+		return;
 }
-
 
 int main()
 {
