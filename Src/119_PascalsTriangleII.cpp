@@ -11,7 +11,7 @@
 
 using namespace std;
 
-vector<int> getRow(int rowIndex) {
+vector<int> getRow1(int rowIndex) {
 
 	vector<int> CurRow(rowIndex+1, 1);
 	vector<int> NextRow(rowIndex+1, 1);
@@ -27,9 +27,18 @@ vector<int> getRow(int rowIndex) {
 	return CurRow;
 }
 
+vector<int> getRow2(int rowIndex) {
+
+		vector<int> row(rowIndex+1, 1);
+		for(int iRow = 2; iRow <= rowIndex; iRow++){
+				for(int j = iRow - 1; j >=1; j--)
+						row[j] += row[j-1];
+		}
+		return row;
+}
 
 int main()
 {
-	vector<int> ret = getRow(5);
+	vector<int> ret = getRow2(5);
 	return 0;
 }
