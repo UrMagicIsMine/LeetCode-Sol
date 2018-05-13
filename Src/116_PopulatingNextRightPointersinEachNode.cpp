@@ -69,57 +69,52 @@ TreeLinkNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
 /* Solution 1 start from here, use queue to do level tranverse */
 
 void connect_Sln1(TreeLinkNode *root) {
-
-	if (root) {
-		queue<TreeLinkNode*> qNodes;
-		qNodes.push(root);
-		int N = qNodes.size();
-		while (!qNodes.empty())
-		{
-			TreeLinkNode *pNode = qNodes.front();
-
-			if (pNode->left)
-				qNodes.push(pNode->left);
-			if (pNode->right)
-				qNodes.push(pNode->right);
-
-			qNodes.pop();
-			N--;
-			if (N == 0) {
-				pNode->next = nullptr;
-				N = qNodes.size();
-			}
-			else
-				pNode->next = qNodes.front();
+		if(!root)
+				return;
+		queue<TreeLinkNode*> QueNodes;
+		QueNodes.push(root);
+		while(!QueNodes.empty()){
+				int N = QueNodes.size();
+				while(N--){
+						TreeLinkNode *pNode = QueNodes.front();
+						QueNodes.pop();
+						if(N>0)
+								pNode->next = QueNodes.front();
+						if(pNode->left)
+								QueNodes.push(pNode->left);
+						if(pNode->right)
+								QueNodes.push(pNode->right);
+				}
 		}
-	}
-	return;
+		return;
+}
+
+void connect_Sln2(TreeLinkNode *root) {
+		if(!root)
+				return;
+		if(root->left){
+				root->left->next = root->right;
+				if(root->next)
+						root->right->next = root->next->left;
+				connect(root->left);
+				connect(root->right);
+		}
+		return;
 }
 
 /******************************************************************************/
 /* Solution 2 start from here, connect each level */
 
-void connect_Sln2(TreeLinkNode *root) {
-
-	if (!root)
-		return;
-
-	TreeLinkNode *pLeft = root;
-	TreeLinkNode *pCur = nullptr;
-
-	while (pLeft->left) {
-
-		pCur = pLeft;
-		while (pCur) {
-			pCur->left->next = pCur->right;
-			if (pCur->next) {
-				pCur->right->next = pCur->next->left;
-			}
-			pCur = pCur->next;
+void connect_Sln3(TreeLinkNode *root) {
+		while(root && root->left){
+				TreeLinkNode *pSave = root->left;
+				while(root){
+						root->left->next = root->right;
+						root->right->next = root->next? root->next->left : nullptr;
+						root = root->next;
+				}
+				root = pSave;
 		}
-		pLeft = pLeft->left;
-	}
-	return;
 }
 
 vector<int> BFtranverse(TreeLinkNode* root)
