@@ -147,6 +147,33 @@ void connect_Sln2(TreeLinkNode *root) {
 	return;
 }
 
+/******************************************************************************/
+/* Solution 2 start from here, connect each level;
+* Use a dummy node as the head of each level
+*/
+
+void connect_Sln3(TreeLinkNode *root) {
+
+		while(root){
+
+				TreeLinkNode dummy(0), *pNode = &dummy;
+				while(root){
+						if(root->left){
+								pNode->next = root->left;
+								pNode = pNode->next;
+						}
+						if(root->right){
+								pNode->next = root->right;
+								pNode = pNode->next;
+						}
+						root = root->next;
+				}
+				root = dummy.next;
+		}
+
+		return;
+}
+
 vector<int> BFtranverse(TreeLinkNode* root)
 {
 	vector<int> resl;
