@@ -48,36 +48,16 @@ TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
 	return _buildTree(preorder, i, inorder, 0, N - 1);
 }
 
-bool _isLeaf(TreeNode * pNode) {
-	return pNode->left == nullptr && pNode->right == nullptr;
-}
-
-typedef vector<int> vec1D;
-typedef vector<vec1D> vec2D;
-
-vector<vector<int>> pathSum(TreeNode* root, int sum) {
-    vec1D preVecs;
-    vec2D resl;
-    _pathSumRecv(root, resl, sum, 0, preVecs);
-    return resl;
-}
-
-void _pathSumRecv(TreeNode* pNode, vec2D& resl, int targetSum, int RunningSum, vec1D& path){
-
-    if(pNode)
-    {
-        path.push_back(pNode->val);
-        if( _isLeaf(pNode) && pNode->val + RunningSum == targetSum )
-            resl.push_back(path);
-
-        _pathSumRecv(pNode->left, resl, targetSum, RunningSum+pNode->val, path);
-        _pathSumRecv(pNode->right, resl, targetSum, RunningSum+pNode->val, path);
-        path.pop_back();
-    }
-    return;
-}
-bool _isLeaf(TreeNode * pNode){
-    return pNode->left == nullptr && pNode->right == nullptr;
+bool hasPathSum(TreeNode* root, int sum) {
+	if (root) {
+		if (!root->left && !root->right)
+			return sum == root->val;
+		if (hasPathSum(root->left, sum - root->val))
+			return true;
+		if (hasPathSum(root->right, sum - root->val))
+			return true;
+	}
+	return false;
 }
 
 int main()
@@ -87,6 +67,6 @@ int main()
 	vector<int> inOrder = { 7,11,2,4,5,13,8,4,1 };
 	TreeNode* root = buildTree(preOrder, inOrder);
 
-	vec2D ret = pathSum(root, 22);
+	bool ret = hasPathSum(root, 22);
 	return 0;
 }
