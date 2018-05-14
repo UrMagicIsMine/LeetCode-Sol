@@ -84,6 +84,53 @@ int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
 	return 0;
 }
 
+int ladderLength_Sln2(string beginWord, string endWord, vector<string>& wordList) {
+
+		unordered_set<string> candWords(wordList.begin(), wordList.end());
+
+		if(candWords.find(endWord) == candWords.end())
+				return 0;
+
+	unordered_set<string> bSetWords, eSetWords;
+	bSetWords.insert(beginWord);
+	eSetWords.insert(endWord);
+	int dist = 2;
+	while (!bSetWords.empty()) {
+
+		int N1 = bSetWords.size(), N2 = eSetWords.size();
+		if (N1 > N2)
+			swap(bSetWords, eSetWords);
+
+		unordered_set<string> nSetWords;
+		for (auto it = bSetWords.begin(); it != bSetWords.end(); it++) {
+
+			string str = *it;
+			int N = str.length();
+			for (int i = 0; i < N; i++) {
+				char p = str[i];
+				for (char c = 'a'; c <= 'z'; c++) {
+					if (p != c) {
+						str[i] = c;
+
+						if (eSetWords.find(str) != eSetWords.end())
+							return dist;
+
+						if (candWords.find(str) != candWords.end()) {
+							nSetWords.insert(str);
+							candWords.erase(str);
+						}
+						str[i] = p;
+					}
+				}
+			}
+
+		}
+		dist++;
+		swap(bSetWords, nSetWords);
+	}
+		return 0;
+}
+
 /***********************************************************************/
 
 int main()
