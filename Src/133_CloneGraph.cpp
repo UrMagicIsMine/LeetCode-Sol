@@ -27,6 +27,7 @@
 */
 
 #include <vector>
+#include <queue>
 #include <unordered_map>
 #include <cassert>
 using namespace std;
@@ -42,12 +43,6 @@ struct UndirectedGraphNode {
 
 typedef UndirectedGraphNode UDGNode;
 typedef unordered_map<UDGNode*, UDGNode*> UDGNodesHash;
-
-UndirectedGraphNode *cloneGraph(UndirectedGraphNode *node) {
-
-	UDGNodesHash htable;
-	return _getGraphNode(node, htable);
-}
 
 UndirectedGraphNode *_getGraphNode(UndirectedGraphNode *node, UDGNodesHash& htable) {
 	/* return null; */
@@ -68,10 +63,48 @@ UndirectedGraphNode *_getGraphNode(UndirectedGraphNode *node, UDGNodesHash& htab
 
 }
 
+UndirectedGraphNode *cloneGraph_DFS(UndirectedGraphNode *node) {
+
+	UDGNodesHash htable;
+	return _getGraphNode(node, htable);
+}
+
+UndirectedGraphNode *cloneGraph_BFS(UndirectedGraphNode *node) {
+	if (!node)
+		return nullptr;
+	unordered_map<UndirectedGraphNode*, UndirectedGraphNode*> nodeMaps;
+	queue<UndirectedGraphNode*> queNodes;
+	queNodes.push(node);
+	UndirectedGraphNode* cur = new UndirectedGraphNode(node->label);
+	nodeMaps[node] = cur;
+	while (!queNodes.empty()) {
+		UndirectedGraphNode* pNode = queNodes.front();
+		queNodes.pop();
+		vector<UndirectedGraphNode *>& nbs = pNode->neighbors;
+		for (int i = 0; i < nbs.size(); i++) {
+
+			if (nodeMaps.find(nbs[i]) == nodeMaps.end()) {
+
+				UndirectedGraphNode* pNew = new UndirectedGraphNode(nbs[i]->label);
+				nodeMaps[nbs[i]] = pNew;
+				queNodes.push(nbs[i]);
+			}
+			nodeMaps[pNode]->neighbors.push_back(nodeMaps[nbs[i]]);
+
+		}
+	}
+	return nodeMaps[node];
+}
+
 int main()
 {
-	UndirectedGraphNode *pNode = new UndirectedGraphNode(0);
-	UndirectedGraphNode *pRet = cloneGraph(pNode);
-	assert(pNode->label == pRet->label);
+	UndirectedGraphNode *pNode1 = new UndirectedGraphNode(0);
+	UndirectedGraphNode *pNode2 = new UndirectedGraphNode(1);
+	UndirectedGraphNode *pNode3 = new UndirectedGraphNode(2);
+	pNode1->neighbors.push_back(pNode2);
+	pNode1->neighbors.push_back(pNode3);
+	pNode2->neighbors.push_back(pNode3);
+	pNode3->neighbors.push_back(pNode3);
+	UndirectedGraphNode *pRet = cloneGraph_BFS(pNode1);
 	return 0;
 }
