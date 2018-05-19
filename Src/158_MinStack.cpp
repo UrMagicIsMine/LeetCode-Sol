@@ -97,6 +97,42 @@ private:
 	vector<int> m_vmin;
 };
 
+class MinStack {
+public:
+    /** initialize your data structure here. */
+    MinStack():m_Min(INT_MAX) {
+
+    }
+
+    void push(int x) {
+        if( x <= m_Min ){
+            m_vec.push_back(m_Min);
+            m_Min = x;
+        }
+        m_vec.push_back(x);
+    }
+
+    void pop() {
+        if( m_Min == m_vec.back() ){
+            m_vec.pop_back();
+            m_Min = m_vec.back();
+        }
+        m_vec.pop_back();
+    }
+
+    int top() {
+        return m_vec.back();
+    }
+
+    int getMin() {
+        return m_Min;
+    }
+
+private:
+    vector<int> m_vec;
+    int m_Min;
+};
+
 int main()
 {
 	MinStack_Sln1 minStack1;
