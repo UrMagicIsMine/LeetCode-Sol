@@ -75,7 +75,7 @@ vector<string> findRepeatedDnaSequences_Sol2(string s) {
 		/* shift 2 bits for the next character */
 		state <<= 2;
 		/* truncate the higher bit, reserve lower 20 bits */
-		state = state & ((1 << 20) - 1);
+		state &= ((1 << 20) - 1);
 
 		/* store the charatcer to the next two bits */
 		if (s[i] == 'C')
