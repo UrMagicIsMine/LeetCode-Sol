@@ -8,6 +8,9 @@ using namespace std;
 
 /* special case of de Polignac's formula */
 
+/* we just count how many 5 factors in all number from 1 to n. with consideration of
+5*5, 5*5*5, ... and their multiples.
+*/
 int trailingZeroes(int n) {
 
 	int ret = 0;
