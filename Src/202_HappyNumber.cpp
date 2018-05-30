@@ -46,6 +46,27 @@ bool isHappy(int n) {
 	return fast == 1;
 }
 
+bool isHappy_Sln2(int n) {
+
+		unordered_map<int, int> pastsums;
+		while(true){
+
+				int sum = 0;
+				while(n){
+						int res = n%10;
+						sum += res * res;
+						n = n/10;
+				}
+
+				n = sum;
+				if(pastsums[n]++ > 0 )
+						break;
+		}
+
+		return n==1;
+}
+
+
 int main()
 {
 	int n = 19;
