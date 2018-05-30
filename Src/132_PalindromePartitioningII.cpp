@@ -16,6 +16,11 @@ Explanation: The palindrome partitioning ["aa","b"] could be produced using 1 cu
 #include <cassert>
 using namespace std;
 
+/*
+isPal[i][j] to indicate whether the sub-string s[i..j] is palindrome
+minCuts[i] saves the minimum cuts found for the sub-string s[0..i-1]
+*/
+
 int minCut(string s) {
 	int N = s.length();
 	if (N == 0)
