@@ -32,48 +32,47 @@
 #include <cassert>
 using namespace std;
 
-int _DFS(unordered_map<int, vector<int>>& graphs, vector<int>& finishable, vector<bool>& visited, int iNode) {
+bool _DFS(const vector<vector<int>> & graphs, vector<bool>& visited, vector<bool>& paths, int i){
 
-	if (finishable[iNode] != -1)
-		return finishable[iNode];
+		if(graphs[i].size() == 0)
+				return true;
 
-	if (visited[iNode] == true) {
-		finishable[iNode] = 0;
-		return 0;
-	}
+		if(paths[i] == true)
+				return false;
 
-	visited[iNode] = true;
-	for (int i = 0; i < graphs[iNode].size(); i++) {
-		int ret = _DFS(graphs, finishable, visited, graphs[iNode][i]);
-		if (ret == 0) {
-			finishable[iNode] = 0;
-			return 0;
+		paths[i] = true;
+
+		for(int j = 0; j < graphs[i].size(); j++){
+				if(visited[graphs[i][j]])
+						continue;
+				if(!_DFS(graphs, visited, paths, graphs[i][j])){
+						return false;
+				}
 		}
-	}
-	visited[iNode] = false;
-	finishable[iNode] = 1;
-	return 1;
+		visited[i] = true;
+		paths[i] = false;
+		return true;
 }
 
 bool canFinish(int numCourses, vector<pair<int, int>>& prerequisites) {
 
-	unordered_map<int, vector<int>> graphs;
-	for (int i = 0; i < prerequisites.size(); i++)
-		graphs[prerequisites[i].first].push_back(prerequisites[i].second);
+		vector<bool> visited(numCourses, false);
+		vector<vector<int>> graphs(numCourses);
+		// construct graph;
 
-	int N = numCourses;
-	vector<int> finishable(N, -1);
-
-	for (int i = 0; i < N; i++) {
-		vector<bool> visited(N, false);
-		if (finishable[i] == -1) {
-			_DFS(graphs, finishable, visited, i);
+		for(auto p : prerequisites){
+				graphs[p.second].push_back(p.first);
 		}
-		if (finishable[i] == 0)
-			return false;
-	}
-	return true;
 
+		vector<bool> paths(numCourses, false);
+
+		// traverse and find if there are loops
+		for(int i = 0; i < numCourses; i++){
+				if(!visited[i] && !_DFS(graphs, visited, paths, i)){
+						return false;
+				}
+		}
+		return true;
 }
 
 int main()
