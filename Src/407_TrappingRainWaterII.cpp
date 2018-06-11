@@ -89,6 +89,6 @@ int main()
                                     {13, 13, 13, 13} };
 	int ans = 14;
 	int ret = trapRainWater(heightMap);
-	assert(ret = ans);
+	assert(ret == ans);
 	return 0;
 }
