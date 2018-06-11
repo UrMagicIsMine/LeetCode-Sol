@@ -66,6 +66,6 @@ int main()
 	vector<int> nums = { 1,3,1 };
 	int k = 0, ans = 0;
 	int ret = smallestDistancePair(nums, k);
-	assert(ret = ans);
+	assert(ret == ans);
 	return 0;
 }
