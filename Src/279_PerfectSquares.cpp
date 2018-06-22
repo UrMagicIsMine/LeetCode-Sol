@@ -12,47 +12,39 @@ using namespace std;
 
 int numSquares(int n) {
 
-	vector<int> SQNumsBase;
-	vector<int> Visited(n, 0);
-	for (int i = 1; i*i <= n; i++) {
-		SQNumsBase.push_back(i*i);
-		Visited[i*i - 1] = 1;
-	}
-
-	if (Visited[n - 1])
-		return 1;
 	/* QueSQNum stores all the numbers that can be reached
 	by the summation of the same number of square numbers, for
 	the first level, QueSQNum contains all the square numbers */
-	queue<int> QueSQNum;
-	for (int i = 0; i < SQNumsBase.size(); i++)
-		QueSQNum.push(SQNumsBase[i]);
-	int iSumLevel = 1;
 
-	while (!QueSQNum.empty()) {
-		iSumLevel++;
+	queue<int> sumque;
+	int level = 0;
+	QueSQNum.push(0);
+	vector<bool> visited(n+1, false);
+
+	while(!QueSQNum.empty()){
+		level++;
 		int N = QueSQNum.size();
-		for (int i = 0; i<N; i++) {
-			int iSQCur = QueSQNum.front();
-
-			for (int j = 0; j<SQNumsBase.size(); j++) {
-				int iSum = iSQCur + SQNumsBase[j];
-				if (iSum == n)
-					return iSumLevel;
-				else if (iSum < n &&  Visited[iSum - 1] == 0) {
-					// If Visited[iSum - 1] > 0, this is not the first time
-					// that we visit this node and we should skip the node (iSum).
-					Visited[iSum - 1] = 1;
-					QueSQNum.push(iSum);
+		for(int i = 0; i < N; i++){
+			int cur = QueSQNum.front();
+			for(int j = 1; j*j <= n; j++){
+				int tmp = cur + j*j;
+				if( tmp == n ){
+						return level;
 				}
-				else if (iSum > n)
-					// We don't need to consider the nodes which are greater ]
-					// than n.
+				else if ( tmp < n && visited[tmp] == false ){
+					// If Visited[iSum] == true, this is not the first time
+					// that we visit this node and we should skip the node (iSum).
+					visited[tmp] == true;
+					QueSQNum.push(tmp);
+				}
+				else if( tmp > n )
+					// We don't need to consider the nodes which are greater than n.
 					break;
-			}
-			QueSQNum.pop();
+				}
+				QueSQNum.pop();
 		}
 	}
+	return -1;
 }
 
 int main()
