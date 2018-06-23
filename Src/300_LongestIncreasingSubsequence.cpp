@@ -46,6 +46,8 @@ int lengthOfLIS_Sln2(vector<int>& nums) {
 	vector<int> array_lis;
 
 	for (int v : nums) {
+		// Returns an iterator pointing to the first element in the range [first,last)
+		// which does not compare less than val.
 		auto it = lower_bound(array_lis.begin(), array_lis.end(), v);
 		if (it == array_lis.end())
 			array_lis.push_back(v);
