@@ -23,24 +23,18 @@ Space complexity : O(n).
 */
 
 int lengthOfLIS_Sln1(vector<int>& nums) {
-
-	int N = nums.size();
-	if (N < 1)
+	if (nums.size() == 0)
 		return 0;
 
-	vector<int> dp(N, 1);
+	vector<int> dp(nums.size(), 1);
 
-	for (int i = 0; i < N; i++) {
-		int max_dp = 0;
+	for (int i = 1; i < nums.size(); i++) {
 		for (int j = 0; j < i; j++) {
-			if (nums[i] > nums[j] && dp[j] > max_dp)
-				max_dp = dp[j];
+			if (nums[j] < nums[i])
+				dp[i] = max(dp[i], dp[j] + 1);
 		}
-		dp[i] = max_dp + 1;
 	}
-
 	return *max_element(dp.begin(), dp.end());
-
 }
 
 /*
@@ -49,22 +43,16 @@ Space complexity : O(n).
 */
 
 int lengthOfLIS_Sln2(vector<int>& nums) {
+	vector<int> array_lis;
 
-	int N = nums.size();
-
-	vector<int> lis_array;
-
-	for (int i = 0; i < N; i++) {
-
-		auto it = lower_bound(lis_array.begin(), lis_array.end(), nums[i]);
-		if (it == lis_array.end())
-			lis_array.push_back(nums[i]);
+	for (int v : nums) {
+		auto it = lower_bound(array_lis.begin(), array_lis.end(), v);
+		if (it == array_lis.end())
+			array_lis.push_back(v);
 		else
-			*it = nums[i];
+			*it = v; // update value in the lis array
 	}
-
-	return lis_array.size();
-
+	return array_lis.size();
 }
 
 /*
