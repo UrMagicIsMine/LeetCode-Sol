@@ -17,7 +17,7 @@
 #include <cassert>
 using namespace std;
 
-int calculate(string s, int & i) {
+int _calculate_sln1(string s, int & i) {
 	//int val = 0;
 	stack<int> numstack;
 	stack<char> opstack;
@@ -64,9 +64,47 @@ int calculate(string s, int & i) {
 	return numstack.top();
 }
 
+int _calculate_sln2(string& s, int& i) {
+		int ret = 0;
+		char op = '+';
+		for(; i < s.length(); i++){
+
+				if(s[i] == ' ')
+						continue;
+				if(isdigit(s[i])){
+						int j = i + 1;
+						int num = s[i] - '0';
+						while(j < s.length() && isdigit(s[j])){
+								num *= 10;
+								num += s[j] - '0';
+								j++;
+						}
+						i = j-1;
+						if(op == '+')
+								ret += num;
+						else
+								ret -= num;
+				}
+				else if(s[i] == '+' || s[i] == '-')
+						op = s[i];
+				else if( s[i] == '(' ){
+						i++;
+						int num = calculate(s, i);
+						//i = j;
+						if(op == '+')
+								ret += num;
+						else
+								ret -= num;
+				}
+				else if( s[i] == ')' )
+						return ret;
+		}
+		return ret;
+}
+
 int calculate(string s) {
 	int i = 0;
-	return calculate(s, i);
+	return _calculate_sln2(s, i);
 }
 
 int main()
