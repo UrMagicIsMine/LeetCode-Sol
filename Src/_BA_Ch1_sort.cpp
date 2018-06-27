@@ -116,7 +116,28 @@ void heapsort(vector<Comparable> & array){
 
 /******************************************************************************/
 // quick sort
+// QuickSort is a Divide and Conquer algorithm. It picks an element as pivot (last
+// element) and partitions the given array around the picked pivot.
+// run-time O(NlogN), memory O(1)
 template<typename Comparable>
-void quicksort(vector<Comparable>& array){
+int partition(vector<Comparable>& array, int low, int high){
+  int pivot = array[high];
+  int i = low - 1;
+  for(int j = low; j < high; j++){
+    if(array[j] <= pivot){
+      i++;
+      swap(array[i], array[j]);
+    }
+  }
+  swap(array[i+1], array[high]);
+  return i+1;
+}
 
+template<typename Comparable>
+void quicksort(vector<Comparable>& array, int low, int high){
+  if(low < high){
+    int mid = partition(array, low, high);
+    quicksort(array, low, mid-1); // mid -1 is important to handle duplicates
+    quicksort(array, mid+1, high);
+  }
 }
