@@ -127,6 +127,26 @@ void MorrisTraversal(struct tNode *root)
 /*******************************************************************************/
 
 // left, right, root
+// key is to use preNode
 void PostOrder(TreeNode* root, vector<int>& vec){
-
+  TreeNode* pNode = root, *preNode = nullptr;
+  stack<TreeNode*> stNodes;
+  while(pNode || !stNodes.empty()){
+    if(pNode){
+      stNodes.push(pNode);
+      pNode = pNode->left;
+    }
+    else{
+      TreeNode* pTopNode = stNodes.top();
+      // if right wasn't visited, visit right
+      if(pTopNode->right && pTopNode->right != preNode){
+        pNode = pTopNode->right;
+      }
+      else{
+        vec.push_back(pTopNode->val);
+        stNodes.pop();
+        preNode = pTopNode;
+      }
+    }
+  }
 }
