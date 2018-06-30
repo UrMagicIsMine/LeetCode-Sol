@@ -92,10 +92,42 @@ void dijkstra(const vector<Wedge>& edges, int s, int N, vector<int>& dist){
 
 /******************************************************************************/
 // Single-Source Shortest Path: Bellman-Ford algorithm
-// run-time O(ElogV), memory O(E)
+// run-time O(EV), memory O(1)
 
-void BellmanFord(){
+void BellmanFord(const vector<Wedge>& edges, int s, int N, vector<int>& dist){
+  fill(dist.begin(), dist.end(), INF);
+  dist[s] = 0;
+
+  while(true){
+    bool update = false;
+
+    for(auto& e : edges){
+      if(dist[e.from] != INF && dist[e.to] > dist[e.from] + e.cost)
+        dist[e.to] = dist[e.from] + e.cost;
+        update = true;
+    }
+
+    if(!update)
+      break;
+  }
   return;
+}
+
+bool findNegativeLoop(const vector<Wedge>& edges, int N, vector<int>& dist){
+  fill(dist.begin(), dist.end(), 0);
+
+  for(int i = 0; i < N; i++){
+    for(auto & e: edges){
+      if(dist[e.to] > dist[e.from] + e.cost){
+        dist[e.to] = dist[e.from] + e.cost;
+
+        // if still relaxed in N-th loop, then negative cycle exists;
+        if(i == N - 1)
+          return true;
+      }
+    }
+  }
+  return false;
 }
 
 /******************************************************************************/
