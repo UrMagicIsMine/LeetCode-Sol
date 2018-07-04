@@ -61,7 +61,7 @@ search range, unless the size of nums are 1.
 
 Suppose our target is 5, then we have only 6 possible cases:
 
-case 1: [6 7] (target < A[l] < A[r])    return condition l, r = l;
+case 1: [6 7] (target < A[l] < A[r])  return condition l, r = l;
 case 2: [5 7] (target = A[l] < A[r])	return condition l, r = l;
 case 3: [4 6] (A[l] < target < A[r])	return condition l, r = r;
 case 4: [5 5] (A[l] = target = A[r])	return condition l, r = l;

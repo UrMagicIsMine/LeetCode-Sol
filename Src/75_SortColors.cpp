@@ -40,15 +40,14 @@ void sortColors_Sln1(vector<int>& nums) {
 }
 
 void sortColors_Sln2(vector<int>& nums) {
-	int len = nums.size();
-	if (len <= 1)
-		return;
-	int idx0 = 0, idx2 = len - 1;
-	for (int i = 0; i <= idx2; i++) {
-		if (nums[i] == 0)
-			swap(nums[idx0++], nums[i]);
-		if (nums[i] == 2)
-			swap(nums[i--], nums[idx2--]);
+	int low = 0, high = (int)nums.size() - 1;
+	for(int i = 0; i <= high; i++){
+			if(nums[i] == 0){
+					swap(nums[low++], nums[i]);
+			}
+			if(nums[i] == 2){
+					swap(nums[i--], nums[high--]);
+			}
 	}
 	return;
 }

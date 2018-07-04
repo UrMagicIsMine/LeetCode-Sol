@@ -1,0 +1,110 @@
+-------------------        Ch 10 distributed System       ----------------------
+
+What is a distributed system
+1) Centralized system: state stored on a single computer
+  - Simpler/Easier to understand/Can be faster for a single user
+2) Distributed system: state divided over multiple computers
+  - More robust (can tolerate failures)
+  - More scalable (often support many users)
+  - More complex
+3) Complexity is bad?
+  - Complex system can be less reliable
+  - Getting a distributed system right is hard
+  - Getting them wrong can be bad (often more important)
+  - Well worth using when their power is needed
+4) Examples
+  - Domain Name System (DNS) - distributed lookup table of hostname -> IP
+  - Facebook & Google use distributed systems extensively (massive scale/fast
+  enough/very reliable)
+  - Email servers (SMTP)
+  - Phone networks (Land line and cellular)
+5) Why build a distributed system
+  - Performance/Reliability/Scaling
+
+How to learn distributed system
+1) Learn by doing
+  - system discipline, experimental science, not just theory
+  - Learn most by taking apart, debugging and modifying an existing system
+2) Topics in Distributed systems
+  - How systems fail
+  - How to express your goals: SLIs, SLOs, and SLAs
+  - How to combine unreliable components to make a more reliable system
+  - How nodes communicate -- RPCs
+  - How nodes find each other -- naming
+  - How to use time in a distributed world (synchronize, stock transaction)
+  - How to get agreement -- consensus (PAXOS)
+  - How to persist data -- distributed storage
+  - How to secure your system
+  - How to operate your distributed system -- the art of SRE
+
+What Could go wrong
+1) Incomplete list of issues
+  - Crash/Data Corruption/Server down/Query of death/Broken dependency/Dos attack
+  Cascading failure/Data loss/Time travel/Owned/Natural disaster/Cause infrastructure
+  failure/Performance cliffs/Hash collision, etc.
+
+The many types of fail
+1) Network failure: TCP/IP(communicate can or not), SSH(guards against Corruption)
+lose of Connection/speed to slow
+2) Network Partition (at least 2 components of system continue to run, but can't
+communicate)
+  - shared state diverges/lost consistency
+  - Detect partition/disable nodes in all but one subgraph (maintains consistency
+  at the cost of availability)
+  - trade-off is the CAP principle
+  - Detecting partitions: ping all N nodes/count responses R/ if R <=[N/2], halts
+3) Node failures
+  - Fail stop: crash/power outage/hardware failure/out of memory/disk full
+  - Strategies: 1) Checkpoint state and restart (high latency), 2) Replicate state
+  and fail over (high cost)
+4) Byzantine failure
+  - Everything that is not fail stop
+  - Too many failures == solution impossible
+  - turn into fail stop (checksums/assertions/timeouts)
+5) Failure matrix
+  - Network: worry about partitions, protocol handles the rest
+  - Node fail stop: checkpoint & recover, replicate & fail over
+  - Byzantine: attempt to transform into fail stop
+
+Byzantine failure
+1) Not fail stop/Traitor nodes send conflicting messages (incorrect result)
+2) Caused by 1) Flaky nodes 2) Malicious nodes
+3) What assumption are you making
+  - Do nodes/network fail?
+  - Finite computation/static or dynamic adversary/Bounded communication time
+  - Fully connected network/randomized algorithms
+4) Consensus: The two Generals Problem ->
+  - no perfect solution
+5) Byzantine Generals
+  - Answers: How many byzantine node failures can a system survive? how might you
+  build such a system
+  - Doesn't answer: is it worth doing at all.
+  - BGP[1]: all loyal generals agree on what 1st general wants
+  - How many traitors can you have and still solve BGP
+  - There is no solution for 3 Generals, 1 Traitor.
+  - Lemma: No solution for 3m+1 generals with > m traitors
+
+1) SLIs SLOs and SLAs
+  - SLI = service level indicator (what you are measuring)
+  - SLO = service level objective (how good should it be)
+  - SLA = service level agreement (SLO + consequences)
+2) Why study SLIs, SLOs, and SLAs
+  - If you measure it, you can improve it
+  - Learn what matters
+  - Reliability promises are part of business
+3) How many nines(5 nines)
+4) What does the SLA imply for provider
+  - They rarely expect their hardware or software to fail
+  - When it fails they think they can fix it quickly
+5) SLA requires you to have
+  - Multiple VMs/Over multiple failure domains/Automatic failover/Monitoring
+  Tolerance of planned outages/Automatic machine provisioning
+6) Setting your SLO (SLO != SLA)
+  - Different applications have different requirement
+  - Be conservative at first, gain experience
+  - SLO < reaction time
+  - Know SLA of your dependencies
+  - Bound your responsibility, Under promise, over deliver
+7) Composing SLAs
+  - No redundancy: P(outage) > P(dependencies having an outage)
+  - W/ redundancy: P(outage) > P(outage of each replica)^(#replicas)

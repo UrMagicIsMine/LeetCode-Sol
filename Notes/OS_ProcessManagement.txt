@@ -1,0 +1,78 @@
+----------------------          Ch 3 Process            ------------------------
+
+Process Concept
+1) process: text section + current activity (program counter, registers, process
+stack, data section, heap, etc.)
+2) Process state: New/Running/Waiting/Ready/terminated
+3) Process control block: process state/Program counter/CPU registers/CPU-scheduling
+information/Memory-management information(base/limit register, segment/page table)/
+Accounting information/IO status information
+
+Process Scheduling
+1) Scheduling Queues:
+  - ready queues: ready and waiting to execute
+  - device queue: wait for a particular I/O device
+2) I/O-bound and CPU-bound process
+3) context switch perform a state save of the current process and a state restore
+of a different process (typically cost a few milliseconds);
+
+Operations on Processes
+1) unique process identifier (pid);
+2) when a process create a new process:
+  - parent execute concurrently with its children;
+  - parent waits until its children have terminated;
+  - address-space (duplicate of the parent/new program loaded into it)
+3) process termination: all the resources (physical/virtual memory, open files
+and IO buffers) are deallocated by the OS.
+4) parent may terminate child: 1) child exceed usage of resources; 2) task is no
+longer required; 3) parent is existing (cascading termination)
+5) zombie (terminated but parent not call wait yet)/orphans (parent exist)
+
+Inter-process communication
+1) Process independent/cooperating, reasons for cooperation: information sharing/
+computation speedup/modularity/convenience
+2) IPC mechanism:
+  - shared memory: faster, suffers from cache coherency issues, process need to
+  ensure they are not writing to the same location simultaneously;
+  - message passing: exchange smaller amount of data, easier to implement in
+  distributed system, implement use system call;
+
+Examples of IPC Systems
+1) POSIX shared memory is organized using memory-mapped files (associate the region
+of shared memory with a file);
+
+Communication in Client-Server System
+1) A pair of processes communicating over a network employs a pair of socket (
+identified by an IP address with a port number)
+  - Connection-oriented (TCP) socket vs Connectionless (UDP) sockets;
+  - Common and efficient, low-level unstructured stream of bytes;
+2) RPC communication data are well structured
+  - Message is addressed to an RPC daemon listening to a port on remote system
+  - Contains an identifier specifying the function to execute and the parameters
+  to pass to that function.
+  - Executed the function and set back the output.
+  - need ensure exactly once using timestamps
+3) Pipes acts as a conduit allowing two processes to communicate
+  - Ordinary pipes allow communication between parent and child processes;
+  - Named pipes permit unrelated processes to communicate.
+
+----------------------          Ch 4 Threads            ------------------------
+
+Overview
+1) Thread comprises a thread ID/program counter/register set/stack, it shares
+code section/data section and other OS resources(opened files/signals) with other
+threads to the same process;
+2) Benefits: Responsive/Resource sharing(data and code, several different of thread
+activity within the same address space)/economy(creation/context-switch, 30/5
+times) and scalability
+
+Multicore Programming
+1) Concurrency (switch and illusion) vs parallelism (parallel in different cores)
+2) Challenges: 1) identify tasks/balance/data splitting/data dependency(synchronize)
+/testing and debugging
+3) Type of parallelism
+  - Data parallelism focuses on distributing subsets of the same data across multiple
+  computing cores and performing the same operation on each core
+  - Task parallelism: distributing tasks, perform a unique operation
+
+Multithreading Models
