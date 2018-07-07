@@ -15,6 +15,36 @@ struct Wedge{
   int cost;
 };
 
+#define INF 0x3fffffff;
+
+/******************************************************************************/
+// BFS
+// run-time O(V+E)
+
+void BFS(vector<Edge>& edges, int N, int s, vector<int>& dist){
+
+  vector<vector<int>> graphs(N);
+  for(auto & e : edges)
+    graphs[e.first].push_back(e.second);
+
+  fill(dist.begin(), dist.end(), INF);
+  dist[s] = 0;
+
+  queue<int> que;
+  que.push(s);
+  while(!que.empty()){
+    int u = s.top();
+    que.pop();
+    for(auto v : graphs[u]){
+      if(dist[v] == INF){
+        dist[v] = dist[u] + 1;
+        que.push(v);
+      }
+    }
+  }
+  return;
+}
+
 /******************************************************************************/
 // Topological sort
 //
@@ -58,8 +88,6 @@ vector<int> TopologicalSort(int N, vector<Edge>& edges){
 // Single-Source Shortest Path: Dijkstra algorithm
 // run-time O(ElogV), memory O(E)
 
-#define INF 0x3fffffff;
-
 void dijkstra(const vector<Wedge>& edges, int s, int N, vector<int>& dist){
   typedef pair<int, int> PII_t;
   vector<vector<PII_t>> graphs(N);
@@ -76,7 +104,7 @@ void dijkstra(const vector<Wedge>& edges, int s, int N, vector<int>& dist){
     PII_t p = heap.top();
     heap.pop();
     u = p.second;
-    if(dist[u] < p.first) continue;
+    if(dist[u] < p.first) continue; // not the shortest path, skip
     for(auto &pNxt : graphs[u]){
       v = pNxt.first;
       w = pNxt.second;
@@ -90,6 +118,10 @@ void dijkstra(const vector<Wedge>& edges, int s, int N, vector<int>& dist){
   return;
 }
 
+vector<int> dijkstra_path(const vector<Wedge>& edges, int s, int N, vector<int>& dist){
+  vector<int> resl;
+  return resl;
+}
 /******************************************************************************/
 // Single-Source Shortest Path: Bellman-Ford algorithm
 // run-time O(EV), memory O(1)
