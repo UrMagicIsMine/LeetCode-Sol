@@ -108,3 +108,93 @@ Byzantine failure
 7) Composing SLAs
   - No redundancy: P(outage) > P(dependencies having an outage)
   - W/ redundancy: P(outage) > P(outage of each replica)^(#replicas)
+
+Class Project
+
+1) AppEngine Pros/Cons
+  - Pros: Scaling done/Authentication done/Reliable storage/Multicast done/SRE as
+  a service/Simple Code
+  - Cons: Costs money/Only uses Google login/Channel depricated/Needs loadtesting
+  /Needs application-level Monitoring/Opaque--hard to understand
+
+2) uWSGI Pros/Cons
+  - Pros: Fixed cost/Simple/Full control
+  - Cons: No authentication/No redundancy/In-memory database/Scales to one machine
+  Manually deployed/One thread per connection
+
+Paxos Simplified
+1) Band go dinner Problem --- want to achieve consensus
+  - Band director went home
+  - People easily Distracted
+  - No fun if group splits up
+  - Hungry: must come to a decision fast
+  - Yelling fails. Use person-to-person communication
+2) Paxos almost this simple
+  - What's happening?
+  - Let's go for burgers!
+3) Consensus
+  - All computers are equivalent/Failure is no Problem/At the cost of some complexity
+4) Is Paxos Hard?
+  - Basic Paxos algorithm: not overly complex
+  - Breakthrough: a proof that consensus was solvable
+  - Paxos has a troubled publication history (Paxos Made Simple)
+  - Multi-Paxos = Paxos + complexity
+  - Raft is more complete and simpler
+5) Alternatives to Paxos (Fault Types/Failover/Servers/Messages)
+  - Byzantine: Byzantine/Instant/3M+1/Exponential
+  - Paxos/Raft: Fail Stop/Instant/2M+1/Linear
+  - Database Replication: Fail Stop/Takes time/M+1/Linear
+6) How does Paxos work
+  - Failure model(node fail/network fail/network slow)
+  - Majority wins(need to ask Majority/Majority must agree)
+  - Majority of servers must be up for Paxos to terminate(need 2M+1 servers to
+  tolerate m failures)
+  - Basic Paxos(Proposer/Acceptor/Round identifier)
+7) What could go wrong
+  - Failures: Acceptor(No problem as long as Majority don't fail)
+  - Failures: Proposer in Prepare Phase(Another proposer takes over)
+  - Failures: Proposer in Accept Phase(Another proposer finishes the job)
+  - Two or more simultaneous proposers (a bit more complex/ can livelock, avoid
+  with leader election)
+8) Leader Election
+  - Can use Paxos itself to elect a leader(what if it livelocks)
+  - A simple solution is good enough: The Bully algorithm
+  (Send my server ID to all peers, If I receive an ID from a peer, respond with
+  my server ID, If all responses have lower IDs than mine: I am the leader. If
+  my ID is higher than received ID, start my own election)
+9) Paxos in the real world
+  - Creating a log of agreement (Multi-Paxos)
+  - Adding and removing nodes from Paxos(Naming and cluster memebership)
+  - Testing and debugging is hard
+  - Byzantine failure(What happens if N = INFINITY)
+10) Performance
+  - Basic Paxos latency (2 network round trips + 2 disk writes)
+  - Multi-Paxos latency (Converges on 1 network round-trip + 1 disk write assuming
+  failures are rare)
+  - Want multiple sites
+  - Bandwidth can be increased through(Batching operations into one Paxos instance/
+  Parallel Paxos instances)
+
+How Counterstrike Works(It's about time)
+1) How does it work
+  - Client-server model(lag)/Speculation
+2) Progress
+  - Client-server model was strongly consistent(Server is one true arbiter of what
+  happened)
+  - Adding speculation makes us weakly consistent(Each player observes a slightly
+  different game/Server is still one true arbiter of what happened)
+  - Problem: Server is lagged vs clients
+3) What about the enemy (Shooting at where players were, not where they are, from
+the server's perspective)
+  - Lag compensation (server side: Record history of player motion/Rewind position
+  to t = t-lag)
+
+4) Clocks are Hard
+  - Need (High resolution/Monotone)
+  - Synchronization over a network is hard (may be impossible to get accurate enough)
+  - GPS based synchronization (Used by Google's Spanner database)
+5) Can we do better
+  - Better predictors (Use machine learning)
+  - Eliminate the server (Colyseus and Donnybrook/Makes cheating-resistance harder)
+  - Optimize communication(Area of interest filtering/Randomized gunfire/Match making
+  matters/Have a LAN party)
