@@ -76,3 +76,210 @@ Multicore Programming
   - Task parallelism: distributing tasks, perform a unique operation
 
 Multithreading Models
+1) Threads may be provided either at user level (user thread), or by the kernel,
+for kernel threads. Relationship between them can be Many-to-One model/One-to-One
+model/Many-to-Many model.
+2) The POSIX standard, may be provided as either a user-level or a kernel-level
+library.
+3) Asynchronous threading: each thread runs independently for every other thread,
+and the parent thread need not know when its child terminates;
+4) Synchronous threading occurs when the parent thread creates one or more children
+and then must wait for all of its children to terminate (fork-join strategy);
+5) Unlimited threads could exhaust system resources --> use thread pool
+  - create a number of threads at process startup and place them into a pool;
+  - receive a request/awakens a thread from the pool(if available)/process the
+  request/returns to the pool/no available thread? must wait.
+  - fast/limits the number of threads/separating performing the task from creating;
+
+Threading Issues
+1) two versions of fork: one that duplicates all threads and another duplicates
+only the thread that invoked the fork system call
+2) Signal: used in UNIX system to notify a process that a particular event occurred
+  - Synchronous signals are delivered to the same process
+  - Asynchronous signals is not as clear, some should be sent to all threads
+3) Thread Cancellation: Invoking pthread_cancel()indicates only a request to cancel
+the target thread, however; actual cancellation depends on how the target thread
+is set up to handle the request.
+  - Asynchronous cancellation: immediately termination (may not free a necessary
+  system-wide resource, data conflict, etc.)
+  - Deferred cancellation: perform this check at a point at which it can be cancelled
+4) Thread-local storage: static data unique to each thread
+
+
+----------------------  Ch 5 Process Synchronization    ------------------------
+Background
+1) Process outcome depends on the order of execution (race condition)
+
+The Critical-Section Problem
+1) critical section/entry section/exit section/remainder section
+2) Mutual exclusion/Progress/Bounded waiting
+  - Preemptive kernels: (responsive/suitable for real-time programming)
+  - Non-preemptive kernels:(exits kernel mode/yields control of CPU)
+Peterson’s Solution
+
+Synchronization Hardware
+1) Could be solved simply in a single-processor environment if we could prevent
+interrupts from occurring, not suitable for SMP()
+2) Many modern computer systems therefore provide special hardware instructions
+that allow us either to test and modify the content of a word or to swap the
+contents of two words atomically -> to implement lock
+
+Mutex Lock
+1) A mutex lock has a boolean variable available whose value indicates if the lock
+is available or not.
+2) Busy-waiting/spinlock
+  - wastes CPU cycles/no context switch/often employed in SMP
+
+Semaphores
+1) A semaphore S is an integer variable that, apart from initialization, is accessed
+only through two standard atomic operations: wait() and signal().
+2) Counting semaphores can be used to control access to a given resource consisting
+of finite number of instances;
+3) Semaphores initialized to the number of resource available; Each process perform
+a wait on the semaphore(decrementing the count); when a process release a resource,
+it performs a signal() operation (increment the count); if the count goes to 0,
+wait will block until the count greater than 0; Operations must executed atomically
+5) Deadlocks V.S. indefinite blocking or starvation V.S. priority inversion
+  - two or more processes are waiting indefinitely for an event that can be caused
+  by only one of the waiting processes.
+  - a situation in which processes wait indefinitely within the semaphore
+Monitors
+
+Synchronization in Linux
+1) atomic operations do not require the overhead of locking mechanisms;
+2) SMP, the fundamental locking is a spinlock, kernel make sure hold it for short
+3) Single process, disable kernel preemption
+4) for long time lock, use mutex lock/Semaphores
+
+----------------------       Ch 4 CPU Scheduling        ------------------------
+
+Basic Concept
+1) CPU burst/IO burst (durations of CPU bursts: exponential distribution)
+2) non-preemptive/preemptive (responsive/race condition)
+3) Dispatcher(context switch/switch to the user mode/start another running) latency
+
+Scheduling Criteria
+1) CPU utilization: keep it as busy as possible;
+2) Throughput: #processes complete per time unit
+3) Turnaround time: sum of all time (time to execute that process)
+4) Waiting time: sum of all time spent waiting in the ready queue
+5) Response time: time it takes to start responding
+
+Scheduling Algorithms
+1) FCFS - simple to write/long average waiting time/non-preemptive
+2) SJF - optimal in minimum average waiting time/difficult to know the length of
+next CPU request/can be either preemptive or non-preemptive
+3) Priority-scheduling
+  - Priorities can be defined either internally or externally (or political factors)
+  - can be preemptive or non-preemptive
+  - indefinite blocking or starvation (solve using aging)
+4) Round-Robin Scheduling
+  - long average waiting time
+  - preemptive as unfinished job will be put back in the ready queue
+  - each process must wait no longer than (n-1) * q time
+  - performance depends on time quantum (degrade to FCFS/too many context switches)
+5) Multilevel Queue Scheduling
+  - background and foreground processes each has its own scheduling algorithm
+  - system/interactive/interactive editing/Batch/Student processes
+6) Multilevel Feedback Queue Scheduling
+  - allow a process move between queues
+
+Thread Scheduling
+1) Contention Scope
+  - process-contention scope : competition for the CPU takes place among threads
+  belonging to the same process.
+  - system-contention scope: competition takes place among all threads in the
+  system (Windows/Linux/Solaris schedule threads using only SCS.)
+
+Multiple-Processor Scheduling
+1) Loading sharing/homogenous(process identical)
+2) symmetric multiprocessing (SMP), each processor is self-scheduling
+  - may be in a common ready queue OR each processor have its own queue
+3) Process affinity (cache invalid) - process has affinity for the processor
+  - soft vs. hard affinity/non-uniform memory access
+4) Load balance - keep the workload evenly distributed across all processors
+  - push migration (check/give) and pull migration(active request)
+  - often counteracts the benefits of processor affinity
+5) Multicore Processors - place multiple processor cores on the same physical chip
+  - faster/comsume less power
+  - memory stall(cache miss), switch to different core
+  - two levels of scheduling(operating level and core level)
+
+Real-Time CPU Scheduling
+1) Soft v.s. Hard real-time system
+  - Interrupt latency: arrival of an interrupt -> determine the type of interrupt
+  -> save the state of current process -> start of the services routine
+  - Dispatch latency: stop one process -> start another (provide preemptive kernels)
+2) Typical scheduling
+  - Priority-based algorithm with preemption
+  - Earliest-Deadline-First Scheduling
+  - Proportional Share Scheduling
+
+Operating-System Examples (Linux)
+1) Default use complete fair scheduling (CFS) algorithms
+  - nice value range from -20 to + 19, be nice to others by lowering its nice value
+  - virtual run time: atomic adjustment based on priority, the scheduler simply
+  selects the task that has the smallest v-runtime value. (nice to I/O-bound task)
+
+Algorithm Evaluation
+1) Deterministic modeling: takes a particular predetermined workload and defines
+the performance of algorithm
+2) Simulations: generated data to drive simulation (uniform, exponential, Poisson)
+or empirically.
+3) implement algorithm on actual system and monitor its performance in real-world
+
+----------------------          Ch 4 Deadlocks          ------------------------
+
+System Model
+1) Process may utilize a resource in only the following sequence: Request/Use/Release
+2) Developers of multithreaded application must remain aware of the possibility
+of deadlocks.
+Deadlock Characterization
+1) A deadlock situation can arise if four conditions hold simultaneously
+  - Mutual exclusion/Hold and wait/No preemption for resource/Circular wait
+2) Resource-Allocation Graph
+  - process(circle), resource (rectangle), dot, request edge, assignment edge
+  - each resource has exactly one instance, cycle implies deadlock
+  - multi-instance, not necessarily
+
+Methods for Handling Deadlock
+1) Deadlock prevention
+2) Deadlock allow/detect/recover
+3) ignore and pretend it never occur (used by most OS)
+
+Deadlock Prevention (low device utilization and reduced system throughput)
+1) Mutual Exclusion: cannot prevent deadlock by denying mutex condition
+2) Hold and wait: request and be allocated all its resources before execution
+  - low resource utilization/starvation is possible
+3) No Preemption: all resources the process is currently holding are preempted
+  - only apply to CPU registers and memory space, not mutex locks and semaphores
+4) Circular Wait: Each process can request resources only in an increasing order
+of enumeration. (proof by contradiction)
+
+Deadlock Avoidance
+1) Consider resource available, allocated, future request and release
+2) Safe State: can allocate resources to each process and still avoid a deadlock
+  - granted only if the allocation leaves the system in a safe state
+3) Resource-Allocation-Graph Algorithm (only one instance of each resource)
+  - introduce request edge (dash line)
+  - request granted only if converting request edge to assignment doesn't result
+  in cycle
+4) Banker’s Algorithm (multiple instances of each resource type)
+  -
+Deadlock Detection
+1) Single instance of each resource type
+  - remove the resource nodes and collapsing the appropriate edges
+  - invoke an algorithm that search for a cycle
+2) Multiple instances of each resource type
+  -
+3) Detection-Algorithm Usage
+  - how often a deadlock likely to occur/how many processes will be affected
+  - invoke detection algorithm for every resource request/at defined intervals
+
+Recovery from Deadlock
+1) Process Termination
+  - Abort all deadlocked processes
+  - Abort one process at a time until the deadlock cycle is eliminated
+2) Resource Preemption
+  - successively preempt some resources from processes until deadlock cycle is broken
+  - selecting a victim/Rollback/Starvation
