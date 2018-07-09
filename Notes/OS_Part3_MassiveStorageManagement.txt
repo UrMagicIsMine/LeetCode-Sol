@@ -1,0 +1,120 @@
+--------------------    Ch 10 Mass Storage Structure     -----------------------
+
+Background Overview of Mass-Storage Structure
+1) Magnetic disk
+  - Platter/Cylinder/Circular Tracks/Sections
+  - transfer rate: megabytes/second
+  - random-access time: seeking time + rotational time (several millisecond)
+  - host controller/disk controller/memory-mapped IO ports/built-in cache
+2) Solid-State Disks
+  - more reliable: have no moving parts
+  - faster: no seek time or latency
+  - consume less power
+
+Disk Structure
+1) one-dimensional arrays of logical blocks (smallest unit of transfer, typically
+512/1024 bytes).
+2) Could map using sectors from outmost Cylinder->same cylinder->inner cylinder.
+However not used for two reasons:
+  - defective sectors: substituting space sectors from elsewhere
+  - the number of sectors per track is not constant
+
+Disk Attachment
+1) Host-Attached Storage (accessed through local I/O ports. disk drives, RAID
+arrays, and CD, DVD, and tape drives)
+2) Network-Attached Storage (accessed remotely over a data network, RPI)
+  - convenient to share a pool of storage
+  - less efficient/lower performance/consume bandwidth
+
+Disk Scheduling
+1) For a multiprogramming system with many processes, the disk queue may often
+have several pending requests. When one is complete, operating system chooses
+which pending request to service next.
+  - FCFS: intrinsically fair, but does not provide the fastest service.
+  - SSTF Scheduling: essentially a form of SJF/cause starvation
+  - SCAN Scheduling(elevator algorithm)
+  - Circular SCAN (C-SCAN) scheduling (reaches the end ->returns to the beginning)
+2) Selection of a Disk-Scheduling Algorithm
+  - greatly influenced by the file-allocation method.
+  - location of directories and index blocks is also important.
+  - often written as a separate module so that replacement is easily
+  - Disk manufacturers implement scheduling to improve rotational latency
+
+Disk Management
+1) low-level formatting: fills the disk with a special data structure for each sector.
+(header, data area and a trailer (error-correcting code))
+2) to record its own data structures on the disk, OS will
+  - partition the disk into one or more groups of cylinders
+  - logical formatting to create a file system (maps of free/allocated space)
+3) to improve efficiency
+  - group blocks together into larger chunks (clusters)
+  - give special program to use a disk partition as a raw disk
+4) Boot block
+  - bootstrap (init CPU register/device controller/content of memory->start OS)
+  - find the OS on disk->load kernel->jumps to an initial address to start OS
+  - stored in read-only memory(ROM)
+  - instead store a tiny bootstrap loader program in the boot whose only job is
+  to bring in a full bootstrap program (in a boot disk/system disk) from disk
+  - code in boot ROM instructs the disk controller to read the boot blocks into
+  memory
+5) Bad Blocks
+  - scan the disk to find bad blocks and flagged as unusable
+  - maintain a list of bad blocks on the disk/updated over the life of the disk
+  - replace each bad section logically with one of the spare sectors
+  - data in bad block are usually lost
+
+Swap-Space Management
+1) Virtual memory uses disk space as an extension of main memory, may decrease
+system performance to provide the best throughput
+2) Implement swapping
+  - may use swap space to hold an entire process image
+  - may simply store pages being pushed out of main memory
+  - safe to overestimate (waste space with no harm) than underestimate (abortion)
+  - Placed on separate disks so that the load can be spread over IO bandwidth (Linux)
+3) Swap space can
+  - carved out of the normal file system (use normal file-system routines/inefficient
+  navigating time-consuming/external fragmentation)
+  - or can use raw partition (swap-space storage manager/optimized for speed/
+  fragmentation is short-lived)
+  - Linux is flexible and support both
+
+RAID Structure(redundant arrays of independent disks)
+1) Improvement of Reliability via Redundancy
+  - mirroring (duplicate every disk)
+  - power failure (write one copy first, then the next/Non-volatile RAM)
+2) Improvement in Performance via Parallelism
+  - rate at which read requests can be handled is doubled
+  - use bit-level/block-level stripping, many time faster read and write(Increase
+  the throughput of multiple small accesses by load balancing/reduce the response
+  time of large accesses)
+3) RAID Levels provide redundancy at lower cost by using disk striping with
+"parity" bits
+  - Level 0: striping at the level of blocks but without any redundancy
+  - Level 1: disk mirroring (4/4)
+  - Level 2: memory-style error-correcting code (ECC) organization (4/3)
+  - Level 3: bit-interleaved parity organization (4/1) (storage overhead reduced/
+  N times faster, expense of computing & writing parity - use hardware controller)
+  - Level 4: block-interleaved parity (block-read access only one disk)
+  - Level 5: block-interleaved distributed parity (spreads data and parity among
+  all N+1 disks)
+  - Level 6: P + Q redundancy scheme
+4) Implementation
+  - Parity RAID is fairly slow when implemented in software, use RAID 0, 1, or 0+1
+  - snapshot is a view of the file system before the last update
+  - replication involves automatic duplication of writes (synchronous or asynchronous)
+  - another implementation: hot spare not used for data but configured as replacement
+5) Problems with RAID
+  - protects against physical media errors, but not other hardware/software errors
+  - inode (data structure for storing file system metadata (contain checksum of
+  each block of data)
+  - lack of flexibility
+
+Stable-Storage Implementation
+1) A disk write results in one of three outcomes: Successful completion/Partial
+failure/Total failure
+2) write first block->write same info on second->Successful and declare complete
+3) failure recovery
+  - both are the same and no error -> no further action
+  - one block contains error -> replace it to the other
+  - neither contains error but block differ in content, replace first with second
+  - add NVRAM as a cache to speedup and battery power
