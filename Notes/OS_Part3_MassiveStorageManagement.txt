@@ -118,3 +118,47 @@ failure/Total failure
   - one block contains error -> replace it to the other
   - neither contains error but block differ in content, replace first with second
   - add NVRAM as a cache to speedup and battery power
+
+
+--------------------     Ch 11 File System Interface     -----------------------
+
+Access method
+1) Sequential Access: Information in the file is processed in order.
+2) Direct Access: file made up of fixed-length logical records that allow programs
+to read and write records in no particular order.
+3) Access through index, etc.
+
+Directory and Disk Structure
+1) Any entity containing a file system is generally known as a volume, each volume
+contains volume table of contents to record files info (name/location/size/type)
+in the system
+2) Tree structure vs. acyclic graph structure (allows share of subdirectories/files)
+
+--------------------   Ch 12 File System Implementation   ----------------------
+
+File System Structure
+1) provide efficient and convenient access to the disk by allowing data to be
+stored, located, and retrieved
+  - defining how the file system should look to the user
+  - create algorithms to map the logical file system to physical storage devices
+2) Layered design
+  - I/O control (device drivers/interrupt handlers) writes specific bit patterns
+  - basic file system: issue commands to read and write physical blocks (manage
+  memory buffers and caches)
+  - file-organization module (link files/logical blocks/physical blocks: translate
+  logical block to physical block, free-space manager)
+  - logical file system: manages metadata information (manages the directory
+  structure via file-control block: ownership/permission/location, etc.)
+  - two many layers introduce more overhead and decrease performance
+
+File System Implementation
+1) Information on Disk
+  - a boot control block: contain information needed to boot an OS from that volume
+  - volume control block: details such as #blocks, block size, free-block count
+  free-block pointer, also called superblock
+  - directory structure: file name and associated inode number
+  - per-file FCB: unique identifier number to associate with a directory entry
+2) Information in-memory
+  - mount table/directory-structure cache/system-wide open-file table/per-process
+  open-file table/buffer hold blocks being read-from or write-to disk
+  -
