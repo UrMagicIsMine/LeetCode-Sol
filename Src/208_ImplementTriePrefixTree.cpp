@@ -8,57 +8,53 @@
 #include <cassert>
 using namespace std;
 
-
-struct trieNode {
-	char cval;
-	bool isLeaf;
-	trieNode * childs[26];
-	trieNode(char c) : cval(c), isLeaf(false) { memset(childs, 0, sizeof(childs)); }
-};
-
 class Trie {
 public:
-	/** Initialize your data structure here. */
-	Trie() : m_root(' ') {
+    /** Initialize your data structure here. */
+    Trie() : isLeaf(false) {
+        for(int i = 0; i < 26; i++)
+            children[i] = nullptr;
+    }
 
-	}
+    /** Inserts a word into the trie. */
+    void insert(string word) {
+        Trie* pNode = this;
+        for(auto c : word){
+            if(pNode->children[c-'a'] == nullptr){
+                pNode->children[c-'a'] = new Trie;
+            }
+            pNode = pNode->children[c-'a'];
+        }
+        pNode->isLeaf = true;
+    }
 
-	/** Inserts a word into the trie. */
-	void insert(string word) {
-		trieNode * pNode = &m_root;
-		for (auto i : word) {
-			if (pNode->childs[i - 'a'] == nullptr) {
-				pNode->childs[i - 'a'] = new trieNode(i);
-			}
-			pNode = pNode->childs[i - 'a'];
-		}
-		pNode->isLeaf = true;
-	}
+    /** Returns if the word is in the trie. */
+    bool search(string word) {
+        Trie* pNode = this;
+        for(auto c : word){
+            if(pNode->children[c-'a'] == nullptr){
+                return false;
+            }
+            pNode = pNode->children[c-'a'];
+        }
+        return pNode->isLeaf;
+    }
 
-	/** Returns if the word is in the trie. */
-	bool search(string word) {
-		trieNode * pNode = &m_root;
-		for (auto i : word) {
-			if (pNode->childs[i - 'a'] == nullptr)
-				return false;
-			pNode = pNode->childs[i - 'a'];
-		}
-		return pNode->isLeaf;
-	}
+    /** Returns if there is any word in the trie that starts with the given prefix. */
+    bool startsWith(string prefix) {
+        Trie* pNode = this;
+        for(auto c : prefix){
+            if(pNode->children[c-'a'] == nullptr){
+                return false;
+            }
+            pNode = pNode->children[c-'a'];
+        }
+        return true;
+    }
 
-	/** Returns if there is any word in the trie that starts with the given prefix. */
-	bool startsWith(string prefix) {
-		trieNode * pNode = &m_root;
-		for (auto i : prefix) {
-			if (pNode->childs[i - 'a'] == nullptr)
-				return false;
-			pNode = pNode->childs[i - 'a'];
-		}
-		return true;
-	}
-
-	trieNode m_root;
-
+private:
+    bool isLeaf;
+    Trie* children[26];
 };
 
 int main()
