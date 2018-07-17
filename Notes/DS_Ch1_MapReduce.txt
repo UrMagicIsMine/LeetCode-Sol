@@ -1,0 +1,101 @@
+----------------------          Ch 1 MapReduce          ------------------------
+MapReduce: Simplified Data Processing on Large Clusters
+
+Abstract/Introduction
+1) MapReduce model
+  - map function: processes a key/value pair to generate a set of intermediate
+  key/value pairs;
+  - reduce function: merges all intermediate values associated with the same
+  intermediate key
+2) run-time system
+  - partitioning the input data/scheduling the program's execution
+  - handling machine failures/managing the required inter-machine communication
+  - allow programmers w/o experience with parallel and distributed systems to easily
+  utilize the resources of a large distributed system
+3) contribution
+  - simple and powerful interface that enables automatic parallelization and
+  distribution of large-scale computations
+  - implementation of this interface that achieves high performance on large
+  clusters of commodity PCs
+
+Programming Model
+1) Map and Reduce
+  - Map (written by user), takes an input pair and produces a set of intermediate
+  key/value pairs;
+  - MapReduce library groups together all intermediate values associated with the
+  same intermediate key I and passed them to the Reduce function
+  - Reduce (written by user), accepts an intermediate key I and a set of values
+  for that key, merges together to form a possibly smaller set of values
+2) Examples (tasks in a large collection of documents)
+  - counting the number of occurrences of each word...
+  - Distributed Grep: find a pattern...
+  - Count of URL Access Frequency from logs of web page requests...
+  - Reverse Web-Link Graph: generate <target; list(source)> pair
+  - Term-Vector per Host: <hostname, <<word, Frequency>, ...> ...
+  - Inverted Index: <word, list(double ID)>, index system
+  - Distributed Sort: map emit <key, record> and reduce do nothing, rely on partition
+  and ordering properties defined by library
+
+Implementation
+1) Detail Process
+  - [SPLIT] MapReduce library split the input files into M pieces (typical 64MB),
+  start up many copies of the program on a cluster
+  - [ASSIGN] master assign M map tasks and R reduce tasks to idle workers
+  - [User Work] worker parsers key/value pairs out of input data and passes each
+   pair to the user-defined Map function, intermediate key/value pairs produced
+  by Map function are buffered in memory
+  - [WORKER WRITE] Buffered pairs are written to local disk (partitioned into R
+  regions) by the partition function. Location of the pairs on the local disk
+  are passed back to the master who forward these locations to the reduce workers
+  - [REDUCER SORT] reduce worker use RPC to read the buffered data from local disk,
+  sorts it by the intermediate keys so that the occurrences of the same key are
+  group together
+  - [User Reduce] reduce worker iterate over the sorted intermediate data and pass
+  the key and their corresponding set of intermediate values to the user's reduce
+  function for further process, the output of user reduce function is appended to
+  a final output file for this reduce partition.
+2) Master keeps several data structure
+  - for each map/reduce task, stores its state and the identity of worker machine
+  - stores the locations and sizes of the R intermediate file produced by the map
+  - Update to the received location/size info as map task completed, then push to
+  reduce work incrementally
+3.1) Fault Tolerance [worker failure]
+  - master pings every worker periodically, marks responded server as failed;
+  - any map or reduced task complete/in progress is reset to idle for rescheduling;
+  - resilient to large-scale worker failures;
+3.2) Fault Tolerance [master failure]
+   - easy to make the master write periodic checkpoints and restart from it
+   - abort the computation if master fail, however
+3.3) Semantics in the Presence of Failures
+   - deterministic functions of the same input produce the same output
+   - map report the file info after complete, master determine record/ignore them
+4) conserve network bandwidth through locality
+   - GFS divide each file into 64MB blocks and stored input on the local disk
+   - create replicas on different machines, schedule a map task on machine contains
+   a replica, if failed, schedule machine near replica
+5) master task O(M+R) scheduling decisions, keeps O(M*R) state in memory
+6) schedule backup execution of the remaining in-progress tasks avoid "straggler"
+  - for example, some machine disabled cache caused a slow-down by factor of 100+
+
+Refinements
+1) Partition function can be defined by User for customization;
+2) within a partition, the intermediate key/value pairs are sorted; (extra feature)
+3) specify an optional Combiner executed on each machine performs a map task to
+do partial merging: map->combine->send over network->sort->reduce
+4) Support a set of input and output types, new type can be added easily as well
+5) MapReduce library detects which record cause deterministic crashes and skips
+these records in order to make forward progress, skip them in re-execution
+6) support sequentially execution on local machine for debugging
+7) master runs internal HTTP server, show status/progress/tasks info, size, rate
+and also show which workers have failed, useful for diagnose bugs
+8) support counters/statistics, maintained by MapReduce library, this facility
+useful sanity check the behavior of MapReduce
+
+Conclusion
+1) Easy to use, even for developers w/o experience with parallel/distributed system;
+2) Hides the details of parallelization/fault tolerance/locality optimization/load
+balancing;
+3) Scales to large clusters comprising thousands of machines;
+4) Network bandwidth is conserved with locality optimization;
+5) Redundant execution can be used to reduce the impact of slow machines, failure
+and data loss.

@@ -1,0 +1,110 @@
+----------------------          Ch 3 Big Table          ------------------------
+Abstract/Introduction
+
+Data Model
+
+API
+
+Building Blocks
+
+Implementation
+1) Three major components: a library linked into every client, one master server,
+many tablet servers; tablet server can be dynamically added/removed from cluster
+  - master: assign tablets to table servers, detect the addition/expiration of tablet
+  servers, balancing tablet-server load, garbage collection of files, handles schema
+  changes (table/column family creation)
+  - tablet server: manages a set of tablets (tens to thousands), handle read and
+  write requests to the tablets, split tablets that have grown too large
+  - clients: communicate directly with tablet servers for reads/writes (master
+  is lightly loaded in practice)
+  - each tablets have 100-200 MB in size by default
+2) Tablet location hierarchy
+  - the first level is a file stored in Chubby (contains the location of the root
+  tablets)
+  - root tablet contains the location of all tablets in a special METADATA tablet
+  - each METADATA tablet contains a set of user tablets (location under a row key:
+  encoding of the tablet's table identifier/end row)
+  - root tablet is just the first tablet in the METADATA, but is treated specially,
+  it's never split - to ensure hierarchy no more than three levels
+  - client library caches tablet location: if empty, location algorithm requires
+  three network round-trips; is stale, take up to six round-trips;
+  - store secondary information in the METADATA: a log of every events pertaining
+  to each tablet
+3) Tablet Assignment
+  - each tablet is assigned to one tablet server at a time, master keeps track of
+  the set of live tablet servers and their current tablets; when a tablet is unassigned,
+  master send a tablet load request to tablet server
+  - when a tablet server start, it create/acquire an exclusive lock on a uniquely-
+  named file in a specific Chubby directory.
+  - tablet server stops serving its tablets if it loses its exclusive lock
+  - If the file still exist, tablet server attempt to reacquire an exclusive lock
+  on its file, if no longer exists, it kills itself/release its lock
+  - master periodically asks each tablet server for the status of its lock:
+    1> if tablet server report lock lost or master unable to reach server, master
+    will acquire an exclusive lock on the server's file to check if Chubby is live
+    2> if Chubby is down, master kill itself; otherwise, master delete its server
+    file and move all tablets into unassigned set
+  - master startup: 1) grab a unique master lock in Chubby, prevent concurrent
+  master instantiation; 2) scans servers directory in Chubby to find the live server
+  3) communicate with every live table to discover assigned tablets; 4) assign the
+  METADATA tablet, scan the   METADATA table to learn the set of tablets (assigned
+  or unassigned)
+  - master initiate table create/delete/merge, table split initiated by tablet server
+  the METADATA and record info for the new tablet in METDATA table, committed and
+  notify master, master detects the new tablet; if notification is lost, master
+  detect the new tablet when it ask tablet server to load the tablet before split,
+  then tablet server will notify the master of split
+4) Tablet Serving
+  - Updates of tablet are committed to a commit log that stores redo record,
+  recently one are stored in memory called memtable, older updates stored in a
+  sequence of SSTables.
+  recovery: read its metadata from METADATA table, contains the list of SSTables
+  that comprise a tablet and a set of redo points, (can be applied redo for recovery)
+  - write: check if its well-formed, check it authorization, commit log group commit,
+  content insert to memtable
+  - read: same check (well-formed and authorization), read operation on merged view
+  of sequence of SSTables/memtable
+  - read/write can continue while tablets are split and merged
+5) Compactions
+  - reach threshold -> create new memtable/frozen memtable -> converted to SSTable
+  -> write to GFS
+  - goes: 1) shrinks the memory usage of server; 2) reduce recovery time
+  - major compaction runs on background: rewrites all SSTables into exactly one
+  SSTable, contains no deletion information or deleted data, reclaim resources
+
+Refinements
+1) Locality groups
+  - clients can group multiple column families together into a locality group.
+  - enable more efficient read
+2) Compression
+  - Client control whether/format SSTables for a locality group are compressed
+  - applied to SSTable block and can be read without decompressing the entire file
+3) Caching for read performance
+  - Scan Cache: high-level caches the key-value pairs (read same data repeatedly)
+  - Block Cache: low-level caches SSTable block (data close to recently used)
+4) Bloom filters
+  - create Bloom filters for SSTables in a particular locality group
+  - lookup of non-existent row/columns do not need to touch disk
+5) Commit-log implementation
+  - co-mingle mutations for different tablets in the same physical log file instead
+  of each table; (large disk seek/degrade group commit)
+  - complete recovery: sort the commit log and output, all mutations for a particular
+  tablet are continuous and can be read with one disk seek
+  - sorting is coordinated by the master
+  - protect mutation from GFS latency spikes using two log writing threads, switch
+  to whichever one is faster
+6) Speeding up tablet recovery
+  - remove tablet from one tablet server to another
+  minor compaction on tablet -> reduce the amount of un-compacted state -> tablet
+  stop serving the tablet -> another minor compaction -> load on another tablet
+7) Exploiting immutability
+  -
+
+Performance Evaluation
+1) random reads/random reads (in mem)/random writes/sequential reads/sequential
+writes/scans
+
+Real Applications
+1) Google Analytics
+2) Google Earth
+3) Personalized Search
