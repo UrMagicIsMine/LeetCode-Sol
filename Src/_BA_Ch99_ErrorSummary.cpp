@@ -37,3 +37,14 @@
 // prob238: use a single left, right value to loop
 // prob268: use ^ operator
 // prob279: use BFS, visit flag, consider break loop when nextsum > target
+// prob300: use lower_bound to build a LIS array
+// prob322: DP solution
+// prob334: use two number to maintain the two min values
+// prob341:
+// prob347: hash table and bucket sort
+// prob350:
+// prob371: use & to get carry and << 1 to advance, use ^ to get preserve,
+// prob378:
+// prob380: [Important], use hash table and vector to achieve O(1), be careful
+//          about the index of hash table
+// prob395: [Important], use hash table to count frequency, determine and split
