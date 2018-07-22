@@ -21,50 +21,46 @@ Given word = "ABCB", return false.
 #include <cassert>
 using namespace std;
 
-bool _DFS(vector<vector<char>>&board, int M, int N, int i, int j, const string& word, int pos) {
+bool _DFS(vector<vector<char>>& board, int M, int N, int i, int j, const string& word, int idx){
 
-	if (pos == word.size())
-		return true;
+		if(idx == word.length()){
+				return true;
+		}
 
-	if (i < 0 || i >= M || j < 0 || j >= N)
-		return false;
+		if( i < 0 || i >= M || j < 0 || j >= N || board[i][j] != word[idx] ){
+				return false;
+		}
 
-	if (board[i][j] == word[pos]) {
+		char tmp = board[i][j];
 		board[i][j] = '#';
-		bool ret = false;
-		ret = _DFS(board, M, N, i - 1, j, word, pos + 1);
-		if (ret) return true;
-		ret = _DFS(board, M, N, i + 1, j, word, pos + 1);
-		if (ret) return true;
-		ret = _DFS(board, M, N, i, j - 1, word, pos + 1);
-		if (ret) return true;
-		ret = _DFS(board, M, N, i, j + 1, word, pos + 1);
-		if (ret) return true;
-		board[i][j] = word[pos];
-	}
-	return false;
+
+		bool found = _DFS(board, M, N, i+1, j, word, idx+1)
+							|| _DFS(board, M, N, i-1, j, word, idx+1)
+							|| _DFS(board, M, N, i, j+1, word, idx+1)
+							|| _DFS(board, M, N, i, j-1, word, idx+1);
+
+		board[i][j] = tmp;
+		return found;
 }
 
 bool exist(vector<vector<char>>& board, string word) {
-	int Len = word.length();
-	if (Len == 0)
-		return false;
-
-	int M = board.size();
-	if (M == 0)
-		return false;
-	int N = board[0].size();
-	if (N == 0)
-		return false;
-
-	for (int i = 0; i < M; i++) {
-		for (int j = 0; j < N; j++) {
-			int ret = _DFS(board, M, N, i, j, word, 0);
-			if (ret == true)
-				return true;
+		int M = board.size();
+		if(M == 0){
+				return false;
 		}
-	}
-	return false;
+		int N = board[0].size();
+		if(N == 0){
+				return false;
+		}
+
+		for(int i = 0; i < M; i++){
+				for(int j = 0; j < N; j++){
+						if(_DFS(board, M, N, i, j, word, 0)){
+								return true;
+						}
+				}
+		}
+		return false;
 }
 
 int main()
