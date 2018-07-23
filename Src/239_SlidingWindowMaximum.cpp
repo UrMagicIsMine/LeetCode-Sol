@@ -30,6 +30,8 @@ Could you solve it in linear time?
 
 using namespace std;
 
+// use multiset, O(NlogN)
+
 vector<int> maxSlidingWindow(vector<int>& nums, int k) {
     vector<int> resl;
 
@@ -43,5 +45,24 @@ vector<int> maxSlidingWindow(vector<int>& nums, int k) {
         // only delete one element
         ms.erase(ms.equal_range(nums[i+1-k]).first);
     }
+    return resl;
+}
+
+// monotonic queue problem, O(N)
+
+vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+    vector<int> resl;
+    deque<int> deq;
+    for(int i = 0; i < nums.size(); i++){
+        while(!deq.empty() && nums[i] > deq.back()){
+            deq.pop_back();
+        }
+        deq.push_back(nums[i]);
+        if( i-k >=0 && deq.front() == nums[i-k] )
+            deq.pop_front();
+        if(i-k+1 >= 0)
+            resl.push_back(deq.front());
+    }
+
     return resl;
 }
