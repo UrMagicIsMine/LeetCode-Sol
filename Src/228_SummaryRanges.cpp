@@ -14,34 +14,29 @@
 using namespace std;
 
 vector<string> summaryRanges(vector<int>& nums) {
-
-	vector<vector<int>> ranges;
-	for (int i = 0; i < nums.size(); i++) {
-
-		if (ranges.empty() || nums[i] != ranges.back().back() + 1) {
-			ranges.push_back(vector<int>());
-			ranges.back().push_back(nums[i]);
+		vector<string> resl;
+		if(nums.size() == 0)
+				return resl;
+		int start = nums[0], cnt = 1;
+		for(int i = 1; i < nums.size(); i++){
+				if(nums[i] - nums[i-1] == 1){
+						cnt++;
+				}
+				else{
+						if(cnt == 1)
+								resl.push_back(to_string(start));
+						else
+								resl.push_back(to_string(start) + "->" + to_string(nums[i-1]));
+						start = nums[i];
+						cnt = 1;
+				}
 		}
-		else if (nums[i] == ranges.back().back() + 1) {
-			if (ranges.back().size() == 1)
-				ranges.back().push_back(nums[i]);
-			else
-				ranges.back()[1] = nums[i];
-		}
-	}
-
-	vector<string> resl;
-
-	for (auto &r : ranges) {
-
-		string s;
-		if (r.size() == 1)
-			s = to_string(r[0]);
+		if(cnt == 1)
+				resl.push_back(to_string(start));
 		else
-			s = to_string(r[0]) + "->" + to_string(r[1]);
-		resl.emplace_back(s);
-	}
-	return resl;
+				resl.push_back(to_string(start) + "->" + to_string(nums.back()));
+
+		return resl;
 }
 
 int main()
