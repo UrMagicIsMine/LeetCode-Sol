@@ -32,6 +32,24 @@ vector<int> dailyTemperatures(vector<int>& temperatures) {
 
 }
 
+vector<int> dailyTemperatures(vector<int>& temperatures) {
+		vector<int> resl(temperatures.size(), 0);
+
+		int n = temperatures.size();
+		for(int i = n-2; i >= 0; i--){
+				int j = i+1;
+				while(j < n && temperatures[i] >= temperatures[j]){
+						if(resl[j] == 0)
+								break;
+						j += resl[j];
+				}
+				if(j < n && temperatures[j] > temperatures[i])
+						resl[i] = j - i;
+		}
+
+		return resl;
+}
+
 int main()
 {
 	vector<int> temperatures = { 73,74,75,71,69,72,76,73 };
