@@ -34,7 +34,7 @@ void _genParBT(vector<string>&resl, string &cur, int nLeft, int nRight) {
 			_genParBT(resl, cur, nLeft - 1, nRight);
 			cur.pop_back();
 		}
-		/* right needs to be larger than left, otherwise it could have this "())(" */
+		/* right needs to be larger than left, otherwise it could have this ")(" */
 		if (nRight > nLeft) {
 			cur.push_back(')');
 			_genParBT(resl, cur, nLeft, nRight - 1);
