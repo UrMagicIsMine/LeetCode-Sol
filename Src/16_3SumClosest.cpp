@@ -41,6 +41,8 @@ int threeSumClosest(vector<int>& nums, int target) {
         /* sum == target, return */
 				return ret;
 		}
+		while(i+1 < N && nums[i] == nums[i+1])
+			i++;
 	}
 	return ret;
 }
