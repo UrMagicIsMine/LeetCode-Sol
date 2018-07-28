@@ -41,6 +41,23 @@ int leastInterval_MT(vector<char>& tasks, int n) {
 	return max<int>(ret, tasks.size());
 }
 
+int leastInterval(vector<char>& tasks, int n) {
+		vector<int> taskfreq(26,0);
+		int maxFreq = 0;
+		for(auto c : tasks){
+				taskfreq[c-'A']++;
+				maxFreq = max(maxFreq, taskfreq[c-'A']);
+		}
+
+		int total = 0;
+		total = (maxFreq - 1) * (n+1);
+		for(auto freq : taskfreq){
+				if(freq == maxFreq)
+						total++;
+		}
+		return max<int>(total, tasks.size());
+}
+
 int leastInterval_PQ(vector<char>& tasks, int n) {
 	int ret = 0;
 
