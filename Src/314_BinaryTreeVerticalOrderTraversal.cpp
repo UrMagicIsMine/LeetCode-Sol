@@ -104,6 +104,6 @@ vector<vector<int>> verticalOrder(TreeNode* root) {
     }
 
     for(auto& p : valueMap)
-        resl.push_back((p.second));
+        resl.push_back(move(p.second));
     return resl;
 }
