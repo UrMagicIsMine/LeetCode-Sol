@@ -31,41 +31,29 @@ using namespace std;
 
 class NumMatrix {
 public:
-	NumMatrix(vector<vector<int>> matrix) : _matrixSum(matrix) {
+	NumMatrix(vector<vector<int>> matrix) {
 
-		int M = matrix.size();
-		if (M == 0)
-			return;
-		int N = matrix[0].size();
+		int m = matrix.size();
+		if (m == 0) return;
+		int n = matrix[0].size();
 
-		for (int i = 1; i < M; i++)
-			_matrixSum[i][0] = _matrixSum[i - 1][0] + matrix[i][0];
+		_sumMtx.resize(m + 1, vector<int>(n + 1, 0));
+		for (int i = 1; i <= m; i++) {
+			for (int j = 1; j <= n; j++) {
+				_sumMtx[i][j] = _sumMtx[i][j - 1] + _sumMtx[i - 1][j]
+					+ matrix[i - 1][j - 1] - _sumMtx[i - 1][j - 1];
+			}
+		}
 
-		for (int j = 1; j < N; j++)
-			_matrixSum[0][j] = _matrixSum[0][j - 1] + matrix[0][j];
-
-		for (int i = 1; i < M; i++)
-			for (int j = 1; j < N; j++)
-				_matrixSum[i][j] = matrix[i][j] + _matrixSum[i - 1][j]
-				+ _matrixSum[i][j - 1] - _matrixSum[i - 1][j - 1];
-		return;
 	}
 
 	int sumRegion(int row1, int col1, int row2, int col2) {
-
-		if (row1 == 0 && col1 == 0)
-			return _matrixSum[row2][col2];
-		else if (row1 == 0)
-			return _matrixSum[row2][col2] - _matrixSum[row2][col1 - 1];
-		else if (col1 == 0)
-			return _matrixSum[row2][col2] - _matrixSum[row1 - 1][col2];
-		else
-			return _matrixSum[row2][col2] - _matrixSum[row2][col1 - 1] - _matrixSum[row1 - 1][col2] + _matrixSum[row1 - 1][col1 - 1];
+		return _sumMtx[row1][col1] + _sumMtx[row2 + 1][col2 + 1]
+			- _sumMtx[row1][col2 + 1] - _sumMtx[row2 + 1][col1];
 	}
 
 private:
-
-	vector<vector<int>> _matrixSum;
+	vector<vector<int>> _sumMtx;
 
 };
 
