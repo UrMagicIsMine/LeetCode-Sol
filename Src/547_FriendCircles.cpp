@@ -59,8 +59,68 @@ int findCircleNum(vector<vector<int>>& M) {
 		}
 	}
 	return numGrp;
-
 }
+
+class UnionFindSet {
+
+public:
+	UnionFindSet(int n) : _par(n + 1, 0), _rank(n + 1, 0) {
+		for (int i = 1; i < n + 1; i++)
+			_par[i] = i;
+	}
+
+	int find(int x) {
+		if (x == _par[x])
+			return x;
+		else
+			return _par[x] = find(_par[x]);
+	}
+
+	// if alreay merged, return false;
+	// otherwise merge and return true;
+	bool Union(int x, int y) {
+		int rx = find(x);
+		int ry = find(y);
+		if (rx == ry) return false;
+
+		if (_rank[rx] < _rank[ry])
+			_par[rx] = ry;
+		else {
+			_par[ry] = rx;
+			if (_rank[rx] == _rank[ry])
+				_rank[rx]++;
+		}
+		return true;
+	}
+
+private:
+	vector<int> _par;
+	vector<int> _rank;
+
+};
+
+
+class Solution {
+public:
+	int findCircleNum(vector<vector<int>>& M) {
+
+		int n = M.size();
+		UnionFindSet ufSet(n);
+
+		for (int i = 0; i < n; i++) {
+			for (int j = i + 1; j < n; j++) {
+				if (M[i][j] == 1)
+					ufSet.Union(i, j);
+			}
+		}
+
+		set<int> s;
+		for (int i = 0; i < n; i++) {
+			s.insert(ufSet.find(i));
+		}
+		return s.size();
+	}
+};
 
 int main()
 {
