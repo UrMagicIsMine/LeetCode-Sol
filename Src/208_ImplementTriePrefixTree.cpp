@@ -57,6 +57,63 @@ private:
     Trie* children[26];
 };
 
+class Trie {
+public:
+    /** Initialize your data structure here. */
+    Trie() : _root(new TrieNode) {
+    }
+
+    /** Inserts a word into the trie. */
+    void insert(string word) {
+        TrieNode *p = _root.get();
+        for(auto c : word){
+            if(p->children[c-'a'] == nullptr)
+                p->children[c-'a'] = new TrieNode;
+            p = p->children[c-'a'];
+        }
+        p->isWord = true;
+    }
+
+    /** Returns if the word is in the trie. */
+    bool search(string word) {
+        TrieNode* p = find(word);
+        return p && p->isWord;
+    }
+
+    /** Returns if there is any word in the trie that starts with the given prefix. */
+    bool startsWith(string prefix) {
+        return find(prefix) != nullptr;
+    }
+
+private:
+
+    struct TrieNode{
+        TrieNode() : isWord(false), children(26, nullptr){
+        }
+
+        ~TrieNode(){
+            for(auto p : children)
+                delete p;
+        }
+
+        bool isWord;
+        vector<TrieNode*> children;
+    };
+
+    TrieNode* find(const string & word){
+        TrieNode* p = _root.get();
+        for(auto c : word){
+            p = p->children[c-'a'];
+            if(p == nullptr)
+                break;
+        }
+        return p;
+    }
+
+    unique_ptr<TrieNode> _root;
+
+};
+
 int main()
 {
 	Trie t;
