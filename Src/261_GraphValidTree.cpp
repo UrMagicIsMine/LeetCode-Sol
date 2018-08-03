@@ -54,6 +54,36 @@ bool validTree(int n, vector<pair<int, int>>& edges) {
 	return true;
 }
 
+
+// BFS solution
+
+bool validTree(int n, vector<pair<int, int>>& edges) {
+	vector<unordered_set<int>> graph(n);
+	for (auto &e : edges) {
+		graph[e.first].insert(e.second);
+		graph[e.second].insert(e.first);
+	}
+
+	vector<bool> visited(n, false);
+	queue<int> que;
+	que.push(0);
+
+	while (!que.empty()) {
+
+		int node = que.front();
+		que.pop();
+		if (visited[node]) return false;
+		visited[node] = true;
+		n--;
+		for (auto ngbr : graph[node]) {
+			graph[ngbr].erase(node); // delete parent
+			que.push(ngbr);
+		}
+
+	}
+	return n == 0;
+}
+
 // Union Find Set solution
 
 class UnionFindSet {
