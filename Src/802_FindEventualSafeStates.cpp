@@ -83,6 +83,44 @@ vector<int> eventualSafeNodes(vector<vector<int>>& graph) {
 	return resl;
 }
 
+// updated solution
+
+vector<int> eventualSafeNodes(vector<vector<int>>& graph) {
+	int n = graph.size();
+
+	vector<int> status(n, 0);
+	vector<bool> paths(n, false);
+
+	vector<int> ret;
+	for(int i = 0; i < n; i++){
+		if(status[i] == 0){
+			_DFS(graph, status, paths, i);
+		}
+		if(status[i] ==1)
+			ret.push_back(i);
+	}
+	return ret;
+}
+
+bool _DFS(vector<vector<int>>& graph, vector<int>& status, vector<bool>&paths, int idx){
+	if(paths[idx] == true){
+		return false; // detect cycle
+	}
+
+	paths[idx] = true;
+	for(auto i : graph[idx]){
+		// child goes into cycle or detected cycle
+		if(status[i] == -1 || (status[i] == 0 && _DFS(graph, status, paths, i) == false)){
+			status[idx] = -1;
+			paths[idx] = false;
+			return false;
+		}
+	}
+	paths[idx] = false;
+	status[idx] = 1; // means safe
+	return true;
+}
+
 int main()
 {
 	vector<vector<int>> graph = { {1, 2},{2, 3},{5},{0},{5},{},{} };
