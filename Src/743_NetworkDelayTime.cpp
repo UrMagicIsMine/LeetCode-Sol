@@ -28,90 +28,63 @@ using namespace std;
 
 int networkDelayTime_DS(vector<vector<int>>& times, int N, int K) {
 
-	/* construct the graph */
-	unordered_map<int, vector<vector<int>>> graph;
-	for (int i = 0; i < times.size(); i++) {
+		const int INF = 0x00ffffff;
+		vector<int> time(N+1, INF);
 
-		int u = times[i][0];
-		int v = times[i][1];
-		int w = times[i][2];
+		typedef pair<int, int> pii_t; // first: dest, second : time
+		vector<vector<pii_t>> graph(N+1);
+		for(auto & v : times)
+				graph[v[0]].emplace_back(v[1], v[2]);
 
-		vector<int> tmp(2, 0);
-		tmp[0] = v;
-		tmp[1] = w;
-		graph[u].emplace_back(tmp);
-	}
+		// first : time, second: node
+		priority_queue<pii_t, vector<pii_t>, greater<pii_t>> heap;
+		time[K] = 0;
+		heap.push(make_pair(0, K));
 
-	using PII = pair<int, int>;
-	auto lambda = [](PII& p1, PII& p2) {
-		return p1.first > p2.first;
-	};
+		while(!heap.empty()){
 
-	vector<bool> visited(N + 1, false);
-	vector<int> darray(N + 1, INT_MAX);
-	darray[K] = 0;
+				pii_t p = heap.top();
+				heap.pop();
+				int u = p.second;
+				if(p.first > time[u]) continue;
 
-	priority_queue<PII, vector<PII>, decltype(lambda)> heap(lambda);
-	heap.emplace(make_pair(0, K));
-
-	while (!heap.empty()) {
-
-		int itop = heap.top().second;
-		heap.pop();
-		visited[itop] = true;
-
-		for (int i = 0; i < graph[itop].size(); i++) {
-
-			int u = graph[itop][i][0];
-			int w = graph[itop][i][1];
-
-			if (!visited[u] && darray[u] > darray[itop] + w) {
-				darray[u] = darray[itop] + w;
-				heap.emplace(make_pair(darray[u], u));
-			}
+				for(auto& ngbr : graph[u]){
+						int v = ngbr.first;
+						int cost = ngbr.second;
+						if(time[v] > time[u] + cost){ // relaxation
+								time[v] = time[u] + cost;
+								heap.push(make_pair(time[v], v));
+						}
+				}
 		}
-	}
 
-	int maxtime = *max_element(darray.begin() + 1, darray.end());
-	return maxtime == INT_MAX ? -1 : maxtime;
+		int maxDelay = *max_element(time.begin() + 1, time.end());
+		return maxDelay == INF? -1 : maxDelay;
 
 }
 
-/* Dijkstra's algorithm, O(VE) */
+/* Bellman-Ford's algorithm, O(VE) */
 
 int networkDelayTime_BF(vector<vector<int>>& times, int N, int K) {
 
-	/* construct the graph */
-	unordered_map<int, vector<vector<int>>> graph;
-	for (int i = 0; i < times.size(); i++) {
+		const int INF = 0x00ffffff;
+		vector<int> time(N+1, INF);
+		time[K] = 0;
+		for(int i = 0; i < N; i++){
+				for(auto& e : times){
+						int u = e[0];
+						int v = e[1];
+						int cost = e[2];
 
-		int u = times[i][0];
-		int v = times[i][1];
-		int w = times[i][2];
-
-		vector<int> tmp(2, 0);
-		tmp[0] = v;
-		tmp[1] = w;
-		graph[u].emplace_back(tmp);
-	}
-
-	vector<int> darray(N + 1, INT_MAX);
-	darray[K] = 0;
-	for (int i = 1; i < N; i++) {
-
-		for (int e = 0; e < times.size(); e++) {
-			int u = times[e][0];
-			int v = times[e][1];
-			int w = times[e][2];
-
-			if (darray[u] != INT_MAX && darray[v] > darray[u] + w)
-				darray[v] = darray[u] + w;
+						if(time[v] > time[u] + cost){
+								time[v] = time[u] + cost;
+						}
+				}
 		}
 
-	}
+		int maxDelay = *max_element(time.begin() + 1, time.end());
+		return maxDelay == INF? -1 : maxDelay;
 
-	int maxtime = *max_element(darray.begin() + 1, darray.end());
-	return maxtime == INT_MAX ? -1 : maxtime;
 }
 
 int main()
@@ -122,7 +95,7 @@ int main()
 	int ans = 2;
 	int ret1 = networkDelayTime_DS(times, N, K);
 	assert(ret1 == ans);
-	int ret2 = networkDelayTime_DS(times, N, K);
+	int ret2 = networkDelayTime_BF(times, N, K);
 	assert(ret2 == ans);
 	return 0;
 }
