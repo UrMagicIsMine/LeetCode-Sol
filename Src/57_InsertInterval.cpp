@@ -46,6 +46,34 @@ vector<Interval> insert(vector<Interval>& intervals, Interval newInterval) {
 	return left;
 }
 
+vector<Interval> insert(vector<Interval>& intervals, Interval newInterval) {
+
+	int pos = 0;
+	for (; pos < intervals.size(); pos++) {
+		if (newInterval.start < intervals[pos].start
+			|| (newInterval.start == intervals[pos].start && newInterval.end < intervals[pos].end))
+			break;
+	}
+	intervals.insert(intervals.begin() + pos, newInterval);
+
+	vector<Interval> resl;
+	Interval itvl = intervals[0];
+	for (int i = 1; i < intervals.size(); i++) {
+		const Interval& itTmp = intervals[i];
+		if (itTmp.start > itvl.end) {
+			resl.push_back(itvl);
+			itvl = itTmp;
+		}
+		else {
+			if (itvl.end < itTmp.end)
+				itvl.end = itTmp.end;
+		}
+	}
+	resl.push_back(itvl);
+	return resl;
+}
+
+
 int main()
 {
 	vector<Interval> intervals = { {1, 2},{3, 5},{6, 7},{8, 10},{12, 16 }};
