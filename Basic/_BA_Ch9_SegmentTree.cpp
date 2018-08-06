@@ -40,7 +40,7 @@ private:
 		// if [a, b) and [l, r) have no intersection
 		if (r <= a || b <= l) return INT_MAX;
 
-		// if [a, b) contains [l, r)
+		// if [l, r) is inside [a, b)
 		if (a <= l && r <= b) return _num[k];
 
 		int vl = query(a, b, k * 2 + 1, l, (l + r) / 2);
