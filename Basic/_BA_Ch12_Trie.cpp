@@ -7,7 +7,6 @@ class Trie{
 public:
 
   Trie() : _root(new TrieNode){
-
   }
 
   bool search(const string & str){
