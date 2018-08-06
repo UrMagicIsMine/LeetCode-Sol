@@ -73,12 +73,65 @@ int maximalRectangle(vector<vector<char>>& matrix) {
 	return maxA;
 }
 
+// solution 2: connect to prob 84
+
+int largestRectangleArea(vector<int>& heights) {
+	stack<int> stIndex;
+	int N = heights.size();
+	heights.push_back(0);
+
+	int maxArea = 0;
+	for (int i = 0; i <= N; i++) {
+		if (stIndex.empty() || heights[i] >= heights[stIndex.top()]) {
+			stIndex.push(i);
+		}
+		else {
+			int curIdx = stIndex.top();
+			stIndex.pop();
+			while (!stIndex.empty() && heights[stIndex.top()] == heights[curIdx]) {
+				stIndex.pop();
+			}
+
+			int right = i;
+			int left = stIndex.empty() ? -1 : stIndex.top();
+			maxArea = max(maxArea, heights[curIdx] * (right - left - 1));
+			i--;
+		}
+	}
+	heights.pop_back();
+	return maxArea;
+}
+
+int maximalRectangle(vector<vector<char>>& matrix) {
+
+	int m = matrix.size();
+	if (m == 0) return 0;
+	int n = matrix[0].size();
+	if (n == 0) return 0;
+	int maxA = 0;
+	vector<int> heights(n, 0);
+	for (int i = 0; i < m; i++) {
+		for (int j = 0; j < n; j++) {
+			if (matrix[i][j] == '0') {
+				heights[j] = 0;
+			}
+			else {
+				heights[j]++;
+			}
+		}
+
+		maxA = max(maxA, largestRectangleArea(heights));
+	}
+	return maxA;
+}
+
+
 int main()
 {
 	vector<vector<char>> matrix = { { '1','0','1','0','0' },
-								    { '1','0','1','1','1' },
-								    { '1','1','1','1','1' },
-								    { '1','0','0','1','0' } };
+								    							{ '1','0','1','1','1' },
+								    							{ '1','1','1','1','1' },
+								    							{ '1','0','0','1','0' } };
 	int ans = 6;
 	int ret = maximalRectangle(matrix);
 	assert(ret == ans);
