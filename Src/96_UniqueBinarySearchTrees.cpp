@@ -47,6 +47,18 @@ int numTrees(int n) {
 	return _DFS(numMaps, 1, n);
 }
 
+int numTrees(int n) {
+		vector<int> dp(n+1, 0);
+		dp[0] = 1;
+		dp[1] = 1;
+		for(int i = 2; i <= n; i++){
+				for(int top = 1; top <= i; top++){
+						dp[i] += dp[top-1] * dp[i-top];
+				}
+		}
+		return dp[n];
+}
+
 int main()
 {
 	int n = 18;
