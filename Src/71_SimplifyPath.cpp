@@ -21,35 +21,35 @@ In this case, you should ignore redundant slashes and return "/home/foo".
 using namespace std;
 
 string simplifyPath(string path) {
-	stack<string> paths;
-	size_t pos1 = path.find_first_of('/', 0), pos2 = 0;
-	while (pos1 != string::npos) {
-		pos2 = path.find_first_of('/', pos1 + 1);
-		string folder;
-		if (pos2 != string::npos)
-			folder = path.substr(pos1 + 1, pos2 - pos1 - 1);
-		else
-			folder = path.substr(pos1 + 1, path.length() - pos1 - 1);
-		pos1 = pos2;
-		if (folder == "")
+	stack<string> stPaths;
+	int i = 0, n = path.size();
+	while (i < n) {
+		while (i < n && path[i] == '/')
+			i++;
+
+		int pos = i;
+		while (i < n && path[i] != '/')
+			i++;
+
+		string sz = path.substr(pos, i - pos);
+		if (sz == "." || sz.empty()) {
 			continue;
-		else if (folder == ".")
-			continue;
-		else if (folder == "..") {
-			if (!paths.empty())
-				paths.pop();
 		}
-		else
-			paths.push(folder);
+		else if (sz == "..") {
+			if (!stPaths.empty())
+				stPaths.pop();
+		}
+		else {
+			stPaths.push(sz);
+		}
 	}
-	string ret;
-	if (paths.empty())
+
+	if (stPaths.empty())
 		return "/";
-	else {
-		while (!paths.empty()) {
-			ret = "/" + paths.top() + ret;
-			paths.pop();
-		}
+	string ret;
+	while (!stPaths.empty()) {
+		ret = "/" + stPaths.top() + ret;
+		stPaths.pop();
 	}
 	return ret;
 }
