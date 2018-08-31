@@ -65,6 +65,33 @@ int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
 	return dp[0][0];
 }
 
+int uniquePathsWithObstacles(vector<vector<int>>& board) {
+		int ret = 0;
+		int m = board.size();
+		if(m == 0) return ret;
+		int n = board[0].size();
+		if(n == 0) return ret;
+
+		vector<int> dp(n, 1);
+
+		for(int j = n-1; j >= 0; j--){
+				if(board[m-1][j] == 1)
+						dp[j] = 0;
+				else if(j!=n-1)
+						dp[j] = dp[j+1];
+		}
+
+		for(int i = m-2; i >= 0; i--){
+				for(int j = n-1; j >= 0; j--){
+						if(board[i][j] == 1)
+								dp[j] = 0;
+						else if(j != n-1)
+								dp[j] += dp[j+1];
+				}
+		}
+		return dp[0];
+}
+
 int main()
 {
 	vector<vector<int>> obstacleGrid = { {0,0,0},{0,1,0},{0,0,0} };
