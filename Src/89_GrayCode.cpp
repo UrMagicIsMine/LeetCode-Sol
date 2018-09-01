@@ -37,6 +37,21 @@ vector<int> grayCode(int n) {
 	return resl;
 }
 
+vector<int> grayCode(int n) {
+		if(n == 0) return {0};
+		if(n == 1) return {0, 1};
+
+		vector<int> resl(1 << n);
+		resl[0] = 0, resl[1] = 1;
+		for(int i = 1; i < n; i++){
+				int pos = 1 << i, offset = pos;
+				for(int j = pos - 1; j >= 0; j--){
+						resl[pos++] = resl[j] + offset;
+				}
+		}
+		return resl;
+}
+
 int main()
 {
 	int n = 3;
