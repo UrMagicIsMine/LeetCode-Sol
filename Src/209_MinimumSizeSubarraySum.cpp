@@ -14,20 +14,15 @@ using namespace std;
 /* two pointer solution, run-time O(N) */
 
 int minSubArrayLen(int s, vector<int>& nums) {
-
-	int N = nums.size();
-	int front = 0, back = 0, sum = 0, ret = INT_MAX;
-	for (; front < nums.size(); front++) {
-		sum += nums[front];
-		if (sum < s)
-			continue;
-		else if (sum >= s) {
-			ret = min(ret, front - back + 1);
-			while (back <= front && sum - nums[back] >= s) {
-				sum -= nums[back];
-				back++;
-				ret = min(ret, front - back + 1);
-			}
+	int n = nums.size(), ret = INT_MAX;
+	int ft = 0, bk = 0, sum = 0;
+	for (; ft < nums.size(); ft++) {
+		sum += nums[ft];
+		if (sum < s) continue;
+		while (bk <= ft && sum >= s) {
+			ret = min(ret, ft - bk + 1);
+			sum -= nums[bk];
+			bk++;
 		}
 	}
 	return ret == INT_MAX ? 0 : ret;
