@@ -23,82 +23,73 @@
 #include <cassert>
 using namespace std;
 
-struct TrieNode {
-	char cval;
-	bool isLeaf;
-	vector<TrieNode*> childs;
-	TrieNode(char c) : cval(c), isLeaf(false) {
-	}
-
-	TrieNode* getChild(char c) {
-		for (int i = 0; i<childs.size(); i++) {
-			if (childs[i]->cval == c)
-				return childs[i];
-		}
-		return nullptr;
-	}
-
-	TrieNode* insert(char c) {
-		TrieNode* ptmp = new TrieNode(c);
-		childs.push_back(ptmp);
-		return ptmp;
-	}
-};
-
 class WordDictionary {
 public:
 	/** Initialize your data structure here. */
-	WordDictionary() : m_root(' ') {
+	WordDictionary() : _root(new TrieNode) {
 
 	}
 
 	/** Adds a word into the data structure. */
 	void addWord(string word) {
-
-		TrieNode * pNode = &m_root;
-		for (auto i : word) {
-			TrieNode *ptmp = pNode->getChild(i);
-			if (ptmp == nullptr)
-				pNode = pNode->insert(i);
+		TrieNode * pNode = _root.get();
+		for (auto c : word) {
+			auto it = pNode->children.find(c);
+			if (it == pNode->children.end())
+				pNode = pNode->children[c] = new TrieNode;
 			else
-				pNode = ptmp;
+				pNode = it->second;
 		}
-		pNode->isLeaf = true;
+		pNode->isWord = true;
+		return;
 	}
 
 	/** Returns if the word is in the data structure. A word could contain the dot character '.' to represent any one letter. */
 	bool search(string word) {
-		TrieNode* pNode = &m_root;
-		return _search(word, 0, pNode);
+		TrieNode* pNode = _root.get();
+		return _search(word, pNode, 0);
 	}
 
-	bool _search(const string& word, int ichar, TrieNode* pNode) {
+private:
 
-		if (ichar == word.length()) {
-			if (pNode->isLeaf)
-				return true;
-			else
-				return false;
+	struct TrieNode {
+		bool isWord;
+		unordered_map<char, TrieNode*> children;
+
+		TrieNode() : isWord(false) {
+
+		}
+
+		~TrieNode() {
+			for (auto & p : children)
+				delete p.second;
+		}
+
+	};
+
+	bool _search(const string & word, TrieNode* pNode, int pos) {
+		if (pos == word.length()) {
+			return pNode->isWord;
+		}
+
+		if (word[pos] == '.') {
+			for (auto p : pNode->children) {
+				if (_search(word, p.second, pos + 1))
+					return true;
+			}
+			return false;
 		}
 		else {
-			if (word[ichar] == '.') {
-				for (int i = 0; i < pNode->childs.size(); i++) {
-					if (_search(word, ichar + 1, pNode->childs[i]) == true)
-						return true;
-				}
+			auto it = pNode->children.find(word[pos]);
+			if (it == pNode->children.end())
 				return false;
-			}
-			else
-			{
-				pNode = pNode->getChild(word[ichar]);
-				if (pNode == nullptr)
-					return false;
-				return _search(word, ichar + 1, pNode);
-			}
+			return _search(word, it->second, pos + 1);
 		}
+		return false;
 	}
 
-	TrieNode m_root;
+	unique_ptr<TrieNode> _root;
+
 };
 
 int main()
