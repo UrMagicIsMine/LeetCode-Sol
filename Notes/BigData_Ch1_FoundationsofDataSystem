@@ -1,0 +1,194 @@
+--------     Ch 1 Reliable, Scalable, and Maintainable Applications    ---------
+
+1) Thinking about Data System
+ - databases, queues, caches being very different categories of tools on access
+ patterns/performance/implementation;
+ - The boundaries between the categories are becoming blurred;
+ - A single tool can no longer meet all of its data processing and storage needs
+ work break into tasks on different tolls and stitches together by application code
+ - When combine several tools in order to provide a service, hide implementation
+ etc., not only an application developer -> data system designer
+  - Reliability: continue to work correctly in the face of adversity
+  - Scalability: reasonable ways to dealing with that growth
+  - Maintainability: maintaining current behavior and add new features
+
+2) Reliability:
+ - performs expected function/tolerate mistakes/good performance/prevent any
+ unauthorized access and abuse
+ - fault: one component deviated from its spec; failure: system stops providing
+ service to the user
+ - Hardware Faults: add redundancy to the individual component, design system to
+ prioritize flexibility and elasticity over single-machine Reliability
+ - Software failures: careful thinking about assumptions and interaction; thorough
+ testing; process isolation; allowing processes to crash and restart; measuring,
+ monitoring and analyzing system behavior in production
+ - Human Errors: design to minimize error; test thoroughly at all levels; allow
+ quick recovery; setup detailed and clear monitoring; implement good practices
+
+3) Scalability
+ - describe a system's ability to cope with increased load;
+ - Twitter homeline example: (average read two orders magnitude lower than write)
+  - 1) Simple relational schema; (struggle with query)
+  - 2) data pipeline for delivering; (faster for refresh headline, posting requires
+  a lot of extra work depends on fan-out)
+  - combine 1) and 2) for celebrity, use separate table for them
+ - describing performance: throughput/responsive time (use distribution of values
+ can measure, arithmetic mean/percentile/tail latencies)/Queueing delays
+  - percentiles are often used in SLO and SLAs, contract that define the expected
+  performance and availability of a service
+ - Approaches for Coping with Load
+  - Scaling up (move to a more powerful machine)
+  - Scaling out (distributing the load across multiple smaller machines), distribute
+  stateless service across multiple machines
+
+4) Maintainability
+ - Operability: Easy for operations teams to keep the system run smoothly, good
+ visibility to the system health, etc.
+ - Simplicity: Easy for understand the system,
+ - Evolvability: Easy to make changes in the future, Good abstractions
+
+5) Summary
+ - functional requirement/non-functional requirement
+ - Reliability means making systems work correctly, even when faults occur.
+ - Scalability means having strategies for keeping performance good even load increases
+ - Maintainability means making life better for the engineering and operations teams
+ who need to work with the system.
+
+---------------       Ch 2 Data Models and Query Languages      ----------------
+
+1) Relational Model Versus Document Model
+- SQL: data is organized into relations called (tables in SQL), where each relation
+is an unordered collection of tuples (rows in SQL)
+- goal of the relational model is to hide the implementation detail behind a cleaner
+interface
+- The birth of NoSQL
+  - A need for greater scalability/preference for free and opensource software/
+  Specialized query operations/a desire for a more dynamic expressive data model
+- The Object-Relational Mismatch
+  - an awkward translation layer is required between the objects in application
+  code and database models of tables, rows and columns. (impedance mismatch)
+- Handle on-to-many relationship
+  - store the many part information to a separate table (require search & join)
+  - Latest SQL added support for structured datatypes and XML data and allowed
+  multi-valued data to be stored within a single row (better locality)
+  - encode the information as a JSON/XML document, stored it on a text column in
+  the database and let the application interpret its structure and content
+- Many-to-One and Many-to-Many Relationships
+ - normalization: Consistent style and spelling across profiles/Avoiding ambiguity
+ /Ease of update in case of change/Better search
+ - easy to use join for relational database/Join is shifted from database to the
+ application code
+- Relational Versus Document databases Today
+ - document model: schema flexibility, better performance due to locality
+ - relational model: providing better support for joins and many-to-one and
+ many-to-many relationships
+
+ ---------------            Ch 3 Storage and Retrieval          ----------------
+1) Data structures that power your database
+ - (db_set) appending to a file is generally very efficient
+ - (db_get) has terrible performance, can be improved by keeping additional metadata
+ - trade-off: well-chosen indexes speed up read queries, but every index slows
+ down writes
+
+2) Hash Indexes
+ - keep an in-memory hash map where every key is mapped to a byte offset in the
+ data file—the location, subject to all the keys fit in the available RAM;
+ - to prevent running out of disk space, break the log into segments and perform
+ compaction on these segments
+ - compaction and merging can be done in a background thread, read and write can
+ remain as normal, after finished, we   can switch to the new merged segments
+ and delete old segments
+ - Some optimization
+  - file format: Len_string, faster and simpler;
+  - deleting record: append a special deletion record to the data file, when perform
+  merge, discard any previous values for the deleted key;
+  - crash recovery: speedup recovery by storing a snapshot of each segment's hash
+  table on disk;
+  - partially written records: include checksum to allow detect and ignore corruption
+  - concurrency control: have only-one writer thread, multi-thread read concurrently
+ - limitations: 1) hash table must fit in memory/range query are not efficient
+
+3) SSTables (Sorted-String Table) and LSM-Trees (Log-Structured Merge-Tree)
+ - the sequence of key-value pair is sorted by key;
+ - merge segment is simple and efficient, (use merge_sort, priority_queue to merge)
+ - no longer need to keep an index of all keys in memory to find a particular key,
+ spare key value offset
+ - group the records into a block and compress it before writing to disk
+ - construct and maintain SSTables: 1) write in-memory tree data structure, (memtable)
+ 2) write it out to disk as an SSTable files; 3) serve a read request, find the
+ key in memtable -> most recent segment -> next-older segment, 4) run merge and
+ compaction process in the background;
+ - to avoid lost data when crush, keep a separate log on disk to append every write
+ - Performance optimization: use additional Bloom filters (memory efficient data
+ structure for approximating the content of a set) to tell if a key does NOT exist,
+ save many unnecessary disk reads.
+ LSM-trees --- keeping a cascade of SSTables that are merged in the background---
+ is simple and efficient. Even when the dataset is much bigger than the available
+ memory, it continues to work well.
+
+4) B-Trees
+ - standard index implementation in relational database, and non-relational ones
+ -
+
+ - B-tree optimization
+  - use copy-on-write scheme instead of WAL for crash recovery, useful for concu-
+  rrency control
+  - save space by not storing the entire key to have a higher branching factor
+  - layout the tree so that the leaf pages apprear in sequential order on disk
+  - additional pointers (add reference to sibling pages to the left and right)
+
+5) Comparing B-Tree and LSM-Trees
+ - LSM-Trees: faster for writes; B-Trees: faster for reads. (benchmark often incon-
+ clusive and sensitive to the details of workload)
+ - LSM-Trees: able to sustain higher write throughput, can be compressed better
+ and often produce smaller files on disk, B-trees leave
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ---------------            Ch 4 Encoding and Evolution          ---------------
+1) Evolvability: we should aim to build system that make it easy to adapt to change
+ - relational database conforms to one schema, while schemaless database can
+ contain a mixture of older and newer data formats written at different times.
+ - servers may perform a rolling upgrade, client you are at the mercy of the user
+  - Backward compatibility: newer code can read data written by older code
+  - Forward compatibility: older code can read data written by newer code
+
+2) Formats for Encoding Data
+ - translation from in-memory representation to a byte sequence is called encoding,
+ and the reverse is called decoding;
+ - language-specific formats: often tied to a particular language, might be low-
+ efficiency
+ - standardized encoding: JSON, XML, Binary Variants; advantage of standardization
+ used to communicate between different organization;
+ - Binary encoding: more compact or faster to parse; Thrift and Protocol buffers
+ come with a code generation tool and can produce classes that implement the schema
+ in various Programming languages.
+ - writer's schema and reader's schema (don't have to be the same, only need to
+ be compatible)
+
+3) Modes of Dataflow
+ - process write to the database encode the data and read from the database decode
+ - backward and forward compatible is necessary; old code keep the new field intact
+ even though it couldn't interpreted;
+ 

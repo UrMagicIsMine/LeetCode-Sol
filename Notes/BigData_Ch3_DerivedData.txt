@@ -1,0 +1,9 @@
+
+System of record
+  - source of truth, hold the authoritative version of your data;
+Derived data systems
+  - result of taking some existing data from another system and transforming or
+  processing it in some way;
+  - derived data is redundant that it duplicates existing information;
+
+---------------            Ch 4 Encoding and Evolution          ---------------
