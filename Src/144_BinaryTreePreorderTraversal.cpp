@@ -69,35 +69,25 @@ vector<int> preorderTraversal_Rcv(TreeNode* root) {
 
 vector<int> preorderTraversal_Itv(TreeNode* root) {
 
+	stack<TreeNode*> stNodes;
 	vector<int> resl;
 
-	if (!root)
-		return resl;
-	stack<TreeNode*> pNodeStack;
-
-	/* treat root as a regular node, push it into stack,
-	 * this can avoid dupicated call of traveling along the left
-	*/
 	TreeNode* pNode = root;
-	pNodeStack.push(root);
+	while (pNode || !stNodes.empty()) {
 
-	while (!pNodeStack.empty()) {
-
-		TreeNode* pTmp = pNodeStack.top();
-		pNodeStack.pop();
-
-		while (pTmp)
-		{
-			if (pTmp->right)
-				pNodeStack.push(pTmp->right);
-			resl.push_back(pTmp->val);
-			pTmp = pTmp->left;
+		if (pNode) {
+			resl.push_back(pNode->val);
+			if (pNode->right) {
+				stNodes.push(pNode->right);
+			}
+			pNode = pNode->left;
 		}
-
+		else {
+			pNode = stNodes.top();
+			stNodes.pop();
+		}
 	}
-
 	return resl;
-
 }
 
 int main()
