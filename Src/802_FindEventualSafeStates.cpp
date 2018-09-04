@@ -104,6 +104,7 @@ vector<int> eventualSafeNodes(vector<vector<int>>& graph) {
 
 bool _DFS(vector<vector<int>>& graph, vector<int>& status, vector<bool>&paths, int idx){
 	if(paths[idx] == true){
+		status[idx] = -1;
 		return false; // detect cycle
 	}
 
