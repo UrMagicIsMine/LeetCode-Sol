@@ -1,0 +1,36 @@
+----------------------           PR 4 Spanner           ------------------------
+Abstract/Introduction
+
+1) Spanner is Google's scalable, multi-version, globally-distributed and synchr-
+onously-replicated database
+2) novel time API that exposes clock uncertainty
+  - non-blocking reads in the past/ lock-free read-only transactions/atomic
+  scheme changes
+3) database shards data across many sets of Paxos state machine in data-centers
+spread all over the world.
+4) Replication is used for global availability and geographic locality
+  - clients automatically failover between replicas
+  - Spanner automatically reshards data across machines as the data/server changes
+  - Spanner automatically migrates data across machine/datacenters to load balance
+5) data is versioned and timestamped with its commit time, old versions of data
+are subject to configurable garbage-collection policy
+6) Support general-purpose transactions and provide a SQL-based query language
+7) Features supported
+  - replication configurations for data can be dynamically controlled at a fine
+  grain;
+  - provide externally consistent reads and writes, globally-consistent reads
+  across the database;
+  - new TrueTime API (expose clock uncertainty and slow-down to wait out that
+  uncertainty/keep uncertainty small by using multiple model clock reference)
+
+Implementation
+
+1) Terminology
+  - Universe: a spanner deployment;
+    - universe master and the placement driver are singletons, universe master
+    is a console of all zones status for debugging, placement dirvers handles
+    automated movement of data across zones on the timescale of minutes
+  - Zones: analog of Bigtable server, unit of physical isolation
+    - one zone-master and 100+/1K+ span-server
+    - location proxies: locate the spanservers to serve the data
+  - directory: used to manage replication and locality, unit of data movement

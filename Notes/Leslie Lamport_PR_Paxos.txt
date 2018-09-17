@@ -1,0 +1,13 @@
+----------------------           PR 1 Paxos           ------------------------
+
+Paxos Made Simple, Leslie Lamport
+
+The Consensus Algorithm
+1) Problem and Requirement: safety requirements for consensus are to ensure that
+some proposed value is eventually chosen and if a value has been chosen, then a
+process can eventually learn the value;
+2) Performed by three classes of agents: Proposers, Acceptors and Learners
+3) Messages sent use customary asynchronous, non-Byzantine model:
+ - Agents operate at arbitrary speed, may fail by stopping and may restart
+ - Messages can take arbitrarily long to be delivered, can be duplicated and
+ can be lost, but they are not corrupted;

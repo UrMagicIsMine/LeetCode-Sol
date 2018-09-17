@@ -1,4 +1,4 @@
-----------------------             Ch 2 GFS             ------------------------
+----------------------             PR 2 GFS             ------------------------
 The Google File System
 
 Abstract/Introduction

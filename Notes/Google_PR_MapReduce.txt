@@ -1,4 +1,4 @@
-----------------------          Ch 1 MapReduce          ------------------------
+----------------------          PR 1 MapReduce          ------------------------
 MapReduce: Simplified Data Processing on Large Clusters
 
 Abstract/Introduction
