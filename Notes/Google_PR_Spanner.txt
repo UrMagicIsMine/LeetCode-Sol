@@ -34,3 +34,18 @@ Implementation
     - one zone-master and 100+/1K+ span-server
     - location proxies: locate the spanservers to serve the data
   - directory: used to manage replication and locality, unit of data movement
+2) Spanserver Software Stack
+  - Colossus: distributed file system, successor to the Google File System;
+  - Tablet: <key, timestamp> -> string, state stored in B-tree-like files and
+  write-ahead log;
+  - Paxos state machine per tablet to support replication
+  - lock table on relica leader: to implement concurrency control
+  - transactions manager on relica leader: to support distributed transactions
+3) Directories and Placement
+  -
+
+TrueTime
+1)
+
+Concurrency Control
+1) Timestamp Management

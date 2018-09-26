@@ -11,3 +11,6 @@ process can eventually learn the value;
  - Agents operate at arbitrary speed, may fail by stopping and may restart
  - Messages can take arbitrarily long to be delivered, can be duplicated and
  can be lost, but they are not corrupted;
+
+Implementation
+1) 
