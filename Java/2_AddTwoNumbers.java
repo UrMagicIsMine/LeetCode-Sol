@@ -18,13 +18,8 @@ public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
     int carry = 0;
     while (l1 != null || l2 != null || carry != 0) {
         int sum = (l1 != null ? l1.val:0) + (l2 != null? l2.val:0) + carry;
-        if (sum >= 10) {
-            sum -= 10;
-            carry = 1;
-        } else {
-            carry = 0;
-        }
-        node.next = new ListNode(sum);
+        carry = sum / 10;
+        node.next = new ListNode(sum % 10);
         node = node.next;
         if (l1 != null) {
             l1 = l1.next;
