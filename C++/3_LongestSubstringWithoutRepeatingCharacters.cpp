@@ -61,21 +61,18 @@ int lengthOfLongestSubstring_HT1(string s) {
 */
 
 int lengthOfLongestSubstring_HT2(string s) {
-	if (s.size() == 0)
-		return 0;
-	int resl = 1, front = 0, back = 0;
-	unordered_map<char, int> chartbl;
+	unordered_map<char, int> char_table;
+	int front = 0, back = 0, ret = 0;
 	for (; front < s.size(); front++) {
-		auto it = chartbl.find(s[front]);
-		if (it == chartbl.end() || it->second < back) {
-			resl = max(resl, front - back + 1);
-		}
-		else {
-			back = it->second + 1;
-		}
-		chartbl[s[front]] = front;
+			auto iter = char_table.find(s[front]);
+			if (iter == char_table.end() || iter->second < back) {
+					ret = max(ret, front - back + 1);
+			} else {
+					back = iter->second + 1;
+			}
+			char_table[s[front]] = front;
 	}
-	return resl;
+	return ret;
 }
 
 int main()
