@@ -32,3 +32,19 @@ public double findMedianSortedArrays(int[] nums1, int[] nums2) {
         return (combined[N >> 1] + combined[(N >> 1) - 1])/2.0;
     }
 }
+
+public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int N1 = nums1.length, N2 = nums2.length;
+        int N = N1 + N2;
+        int[] combined = new int[N];
+        for (int i = 0; i < N1; i++)
+            combined[i] = nums1[i];
+        for (int i = 0; i < N2; i++)
+            combined[N1+i] = nums2[i];
+        Arrays.sort(combined);
+        if ( (N & 1) != 0 ) {
+            return combined[N >> 1];
+        } else {
+            return (combined[N >> 1] + combined[(N >> 1) - 1])/2.0;
+        }
+    }
