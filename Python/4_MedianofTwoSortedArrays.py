@@ -21,11 +21,7 @@ class Solution(object):
         :type nums2: List[int]
         :rtype: float
         """
-        nums = []
-        for num in nums1:
-            nums.append(num)
-        for num in nums2:
-            nums.append(num)
+        nums = nums1 + nums2
         nums.sort()
         n = len(nums)
         if n&1 :
@@ -57,4 +53,3 @@ class Solution(object):
             return nums[n>>1]
         else:
             return (nums[n>>1] + nums[(n>>1) - 1])/2.0
-            
