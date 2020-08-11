@@ -32,3 +32,24 @@ func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
         return float64(nums[n>>1] + nums[(n>>1)-1])/2.0
     }
 }
+
+func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
+    var n1, n2 = len(nums1), len(nums2)
+    var n = n1 + n2
+    var nums = make([]int, n)
+    var idx1, idx2 = 0, 0
+    for ; idx1 + idx2 < n; {
+        if (idx2 == n2 || (idx1 < n1 && nums1[idx1] < nums2[idx2])) {
+            nums[idx1 + idx2] = nums1[idx1]
+            idx1++
+        } else {
+            nums[idx1 + idx2] = nums2[idx2]
+            idx2++
+        }
+    }
+    if ((n & 1) != 0) {
+        return float64(nums[n>>1])
+    } else {
+        return float64(nums[n>>1] + nums[(n>>1)-1])/2.0
+    }
+}
