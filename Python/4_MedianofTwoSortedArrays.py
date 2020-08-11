@@ -32,3 +32,29 @@ class Solution(object):
             return nums[n>>1]
         else:
             return (nums[n>>1] + nums[(n>>1) - 1])/2.0
+
+class Solution(object):
+    def findMedianSortedArrays(self, nums1, nums2):
+        """
+        :type nums1: List[int]
+        :type nums2: List[int]
+        :rtype: float
+        """
+        n1 = len(nums1)
+        n2 = len(nums2)
+        n = n1 + n2
+        nums = []
+        idx1 = 0
+        idx2 = 0
+        for idx in range(n):
+            if idx2 == n2 or (idx1 < n1 and nums1[idx1] < nums2[idx2]):
+                nums.append(nums1[idx1])
+                idx1 += 1
+            else:
+                nums.append(nums2[idx2])
+                idx2 += 1
+        if n&1 :
+            return nums[n>>1]
+        else:
+            return (nums[n>>1] + nums[(n>>1) - 1])/2.0
+            
