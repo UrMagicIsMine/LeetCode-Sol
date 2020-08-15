@@ -36,3 +36,22 @@ class Solution(object):
             i -= 1
             j += 1
         return j - i - 1
+
+class Solution(object):
+    def longestPalindrome(self, s):
+        """
+        :type s: str
+        :rtype: str
+        """
+        ret = ""
+        for idx in range(len(s)):
+            s1 = self.lenOfPalidrome(s, idx, idx)
+            s2 = self.lenOfPalidrome(s, idx, idx+1)
+            ret = max(ret, s1, s2, key=len)
+        return ret
+
+    def lenOfPalidrome(self, s, i, j):
+        while (i >= 0 and j < len(s) and s[i] == s[j]):
+            i -= 1
+            j += 1
+        return s[i+1:j]
