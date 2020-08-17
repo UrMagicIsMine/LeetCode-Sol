@@ -13,3 +13,27 @@
 # string convert(string text, int nRows);
 # convert("PAYPALISHIRING", 3) should return "PAHNAPLSIIGYIR".
 #
+
+class Solution(object):
+    def convert(self, s, numRows):
+        """
+        :type s: str
+        :type numRows: int
+        :rtype: str
+        """
+        if numRows == 1:
+            return s
+        rows = []
+        for i in range(numRows):
+            rows.append([])
+        dir = -1
+        curRow = 0
+        for i in range(len(s)):
+            rows[curRow].append(s[i])
+            if curRow == 0 or curRow == numRows - 1:
+                dir = -dir
+            curRow += dir
+        ret = ""
+        for row in rows:
+            ret += ''.join(row)
+        return ret
