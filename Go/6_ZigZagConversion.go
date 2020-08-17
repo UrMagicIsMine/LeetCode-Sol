@@ -13,3 +13,24 @@
 * string convert(string text, int nRows);
 * convert("PAYPALISHIRING", 3) should return "PAHNAPLSIIGYIR".
 */
+
+func convert(s string, numRows int) string {
+    if numRows == 1 {
+        return s
+    }
+    Rows := make([][]rune, numRows)
+    dir := -1
+    curRow := 0
+    for _, c := range(s) {
+        Rows[curRow] = append(Rows[curRow], c)
+        if curRow == 0 || curRow == numRows - 1 {
+            dir = -dir
+        }
+        curRow += dir
+    }
+    ret := ""
+    for _, row := range(Rows) {
+        ret += string(row)
+    }
+    return ret
+}
