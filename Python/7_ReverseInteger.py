@@ -33,7 +33,7 @@ class Solution(object):
             x /= 10
 
         value = value if sign == True else -value
-        if value > 2**31 - 1 or value < -2**31:
+        if value > (1 << 31) - 1 or value < -1 << 31:
             return 0
         else:
             return value
