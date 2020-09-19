@@ -28,3 +28,13 @@ public boolean isPalindrome(int x) {
     }
     return value == origin;
 }
+
+public boolean isPalindrome(int x) {
+    if (x < 0 || (x != 0 && x % 10 == 0)) return false;
+    int value = 0;
+    while (value < x ) {
+        value = value * 10 + x % 10;
+        x = x / 10;
+    }
+    return value == x || value / 10 == x;
+}
