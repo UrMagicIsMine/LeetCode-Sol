@@ -55,3 +55,21 @@ func intToRoman(num int) string {
     I := []string{"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
     return M[num/1000] + C[num%1000/100] + X[num%100/10] + I[num%10];
 }
+
+// Soluntion 2
+type irmap struct{
+    val int
+    numeral string
+}
+
+func intToRoman(num int) string {
+    ret := ""
+    irmaps := []irmap{{1000, `M`},{900, `CM`},{500, `D`},{400, `CD`},{100, `C`},{90, `XC`},{50, `L`},{40, `XL`},{10, `X`},{9, `IX`},{5, `V`},{4, `IV`},{1, `I`}}
+    for _, irmap := range(irmaps) {
+        for num >= irmap.val {
+           ret += irmap.numeral
+           num -= irmap.val
+        }
+    }
+    return ret
+}
