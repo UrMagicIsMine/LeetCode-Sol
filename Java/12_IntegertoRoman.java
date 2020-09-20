@@ -57,3 +57,23 @@ class Solution {
     static final ArrayList<String> X = new ArrayList(Arrays.asList("", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"));
     static final ArrayList<String> I = new ArrayList(Arrays.asList("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"));
 }
+
+class Solution {
+    public enum Type {
+        M(1000), CM(900), D(500), CD(400), C(100), XC(90), L(50), XL(40), X(10), IX(9), V(5), IV(4), I(1);
+        private final int value;
+        Type(int val) {
+            value = val;
+        }
+    }
+    public String intToRoman(int num) {
+        StringBuilder result = new StringBuilder();
+        for (Type type : Type.values()) {
+            while (num >= type.value) {
+                result.append(type);
+                num -= type.value;
+            }
+        }
+        return result.toString();
+    }
+}
