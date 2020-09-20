@@ -49,11 +49,11 @@ Explanation: M = 1000, CM = 900, XC = 90 and IV = 4.
 */
 
 func romanToInt(s string) int {
-    rimaps := map[byte]int{'I': 1, 'V':5, 'X':10, 'L':50, 'C':100, 'D':500, 'M':1000}
+    rimaps := map[rune]int{'I': 1, 'V':5, 'X':10, 'L':50, 'C':100, 'D':500, 'M':1000}
     ret := 0
     prev := 0
-    for i, _ := range(s) {
-        cur := rimaps[s[i]]
+    for _, c := range(s) {
+        cur := rimaps[c]
         ret += cur
         if prev < cur {
             ret -= 2 * prev
